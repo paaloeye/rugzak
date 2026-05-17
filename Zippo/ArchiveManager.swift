@@ -15,7 +15,28 @@ final class ArchiveManager: ObservableObject {
         return home.appendingPathComponent("Mounts", isDirectory: true)
     }()
 
-    static let supportedExtensions: Set<String> = ["zip", "tar", "gz", "tgz", "bz2", "xz", "tbz", "tbz2"]
+    static let supportedExtensions: Set<String> = [
+        // archive containers
+        "7z", "7zip", "a", "ar", "cab", "cpio", "deb", "iso", "iso9660",
+        "jar", "lha", "lzh", "mtree", "rar", "rpm", "tar", "war", "warc", "xar",
+        "zip", "zipx",
+        // zip-based formats
+        "aab", "apk", "cbz", "crx", "docx", "epub", "ipa", "odf", "odg",
+        "odp", "ods", "odt", "ppsx", "pptx", "whl", "xlsx", "xpi",
+        // rar-based
+        "cbr",
+        // compressed tars
+        "tb2", "tbr", "tbz", "tbz2", "tz2", "tgz", "tlz", "tlz4", "tlzip",
+        "tlzma", "tlrz", "tlzo", "tlzop", "txz", "tz", "taz", "tzs", "tzst", "tzstd",
+        // compression filters (bare compressed files)
+        "br", "brotli", "bz", "bz2", "bzip2", "grz", "grzip", "gz", "gzip",
+        "lrz", "lrzip", "lz", "lz4", "lzip", "lzma", "lzo", "lzop", "xz",
+        "z", "zst", "zstd",
+        // ascii encoding filters
+        "b64", "base64", "uu",
+        // encryption filters (gpg-wrapped archives)
+        "asc", "gpg", "pgp",
+    ]
 
     private var daSession: DASession?
 
