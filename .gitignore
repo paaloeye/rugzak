@@ -1,1 +1,39 @@
-node_modules
+## User settings
+xcuserdata/
+
+## Xcode Patch
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+/*.gcno
+
+## Xcode Workspaces
+*.xcworkspace/xcuserdata/
+*.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+
+# Build artifacts
+.build/
+.dist
+
+# Swift
+*.swiftmodule
+*.swiftdoc
+
+# macOS
+.DS_Store
+
+# Application specific
+*.dSYM.zip
+*.dSYM
+
+# Backup files
+*~
+*.swp
+*.swo
+*~.nib
+
+/node_modules
+.tmp
+default.profraw

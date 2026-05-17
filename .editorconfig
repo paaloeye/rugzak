@@ -26,6 +26,9 @@ indent_style = tab
 [*.xcsettings]
 indent_style = tab
 
+[*.plist]
+indent_style = tab
+
 [*.xcscheme]
 indent_size = unset
 
