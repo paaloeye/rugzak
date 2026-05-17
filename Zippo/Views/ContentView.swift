@@ -6,12 +6,15 @@ private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: 
 @MainActor
 struct ContentView: View {
     @EnvironmentObject var manager: ArchiveManager
-    @State private var isTargeted = false
+    @State private var dropState: DropState
+
+    init(dropState: DropState = .idle) {
+        _dropState = State(initialValue: dropState)
+    }
 
     var body: some View {
         ZStack {
-            DropTargetView(isTargeted: $isTargeted)
-                .ignoresSafeArea()
+            DropTargetView(dropState: $dropState)
 
             VStack(spacing: 0) {
                 if manager.mounts.isEmpty {
@@ -24,13 +27,10 @@ struct ContentView: View {
                     errorBanner(error)
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .opacity(dropState == .idle ? 1 : 0)
         }
         .frame(minWidth: 480, minHeight: 320)
-        .overlay {
-            if isTargeted {
-                dropOverlay
-            }
-        }
     }
 
     private var emptyState: some View {
@@ -77,22 +77,6 @@ struct ContentView: View {
         .background(.bar)
     }
 
-    private var dropOverlay: some View {
-        RoundedRectangle(cornerRadius: 12)
-            .stroke(Color.accentColor, lineWidth: 3)
-            .background(Color.accentColor.opacity(0.08).clipShape(RoundedRectangle(cornerRadius: 12)))
-            .overlay {
-                VStack(spacing: 8) {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 32))
-                        .foregroundStyle(Color.accentColor)
-                    Text("Mount Archive")
-                        .font(.headline)
-                }
-            }
-            .padding(8)
-            .allowsHitTesting(false)
-    }
 }
 
 @MainActor
@@ -108,7 +92,7 @@ private struct MountRow: View {
                 .frame(width: 24)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(archive.archivePath.lastPathComponent)
+                Text(archive.displayName)
                     .font(.body)
                 Text(archive.mountPoint.path)
                     .font(.caption)
@@ -184,35 +168,17 @@ private struct MountRow: View {
             ))
 }
 
-#Preview("Drop targeted") {
-    ContentView_DropTargeted()
+#Preview("Drop targeted — accepting") {
+    ContentView(dropState: .accepting)
         .environmentObject(ArchiveManager.preview())
 }
 
-@MainActor
-private struct ContentView_DropTargeted: View {
-    @EnvironmentObject var manager: ArchiveManager
-    var body: some View {
-        ZStack {
-            ContentView().environmentObject(manager)
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.accentColor, lineWidth: 3)
-                .background(
-                    Color.accentColor.opacity(0.08)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                )
-                .overlay {
-                    VStack(spacing: 8) {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 32))
-                            .foregroundStyle(Color.accentColor)
-                        Text("Mount Archive")
-                            .font(.headline)
-                    }
-                }
-                .padding(8)
-                .allowsHitTesting(false)
-        }
-        .frame(minWidth: 480, minHeight: 320)
-    }
+#Preview("Drop targeted — rejecting") {
+    ContentView(dropState: .rejecting)
+        .environmentObject(ArchiveManager.preview())
+}
+
+#Preview("Drop targeted — already mounted") {
+    ContentView(dropState: .alreadyMounted)
+        .environmentObject(ArchiveManager.previewWithMounts())
 }
