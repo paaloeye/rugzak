@@ -18,7 +18,7 @@ macOS Dock app which bridges [google/fuse-archive](https://github.com/google/fus
 - [x] confirm alert for unmount
 - [x] `DiskArbitration` for event-driven notification on mounted / umounted archives
 - bugs:
-  - [ ] there should be only one window (singleton architecture)
+  - [x] there should be only one window (singleton architecture)
   - [x] _fuse-mounted_ archives outside of Zippo should be enumerated
 - **version 0.2**
 - [ ] support encrypted archives (full UI)

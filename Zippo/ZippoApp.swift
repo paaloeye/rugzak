@@ -5,19 +5,18 @@ struct ZippoApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {
-        WindowGroup {
+        Window("Zippo", id: "main") {
             ContentView()
                 .environmentObject(ArchiveManager.shared)
         }
         .windowResizability(.contentSize)
-        .commands {
-            CommandGroup(replacing: .newItem) {}
-        }
     }
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     func application(_ application: NSApplication, open urls: [URL]) {
+        NSApp.activate(ignoringOtherApps: true)
+        NSApp.windows.first?.makeKeyAndOrderFront(nil)
         for url in urls {
             ArchiveManager.shared.mount(url)
         }
