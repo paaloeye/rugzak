@@ -1,4 +1,7 @@
 import SwiftUI
+import os.log
+
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ContentView")
 
 @MainActor
 struct ContentView: View {
@@ -46,10 +49,15 @@ struct ContentView: View {
     }
 
     private var mountList: some View {
-        List(manager.mounts) { archive in
-            MountRow(archive: archive)
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                ForEach(manager.mounts) { archive in
+                    MountRow(archive: archive)
+                    Divider()
+                }
+            }
+            .padding(.horizontal, 8)
         }
-        .listStyle(.inset)
     }
 
     private func errorBanner(_ message: String) -> some View {
@@ -111,7 +119,7 @@ private struct MountRow: View {
 
             Spacer()
 
-            Text(archive.mountedAt, style: .relative)
+            Text(archive.mountedAt.formatted(.relative(presentation: .numeric)))
                 .font(.caption)
                 .foregroundStyle(.tertiary)
 
@@ -157,7 +165,54 @@ private struct MountRow: View {
     }
 }
 
-#Preview {
+#Preview("Empty state") {
     ContentView()
-        .environmentObject(ArchiveManager.shared)
+        .environmentObject(ArchiveManager.preview())
+}
+
+#Preview("With mounts") {
+    // raise(SIGSTOP) // pauses process — attach LLDB before crash
+    ContentView()
+        .environmentObject(ArchiveManager.previewWithMounts())
+}
+
+#Preview("With error") {
+    ContentView()
+        .environmentObject(
+            ArchiveManager.preview(
+                error: "fuse-archive not found. Install it with: brew install fuse-archive"
+            ))
+}
+
+#Preview("Drop targeted") {
+    ContentView_DropTargeted()
+        .environmentObject(ArchiveManager.preview())
+}
+
+@MainActor
+private struct ContentView_DropTargeted: View {
+    @EnvironmentObject var manager: ArchiveManager
+    var body: some View {
+        ZStack {
+            ContentView().environmentObject(manager)
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.accentColor, lineWidth: 3)
+                .background(
+                    Color.accentColor.opacity(0.08)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                )
+                .overlay {
+                    VStack(spacing: 8) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 32))
+                            .foregroundStyle(Color.accentColor)
+                        Text("Mount Archive")
+                            .font(.headline)
+                    }
+                }
+                .padding(8)
+                .allowsHitTesting(false)
+        }
+        .frame(minWidth: 480, minHeight: 320)
+    }
 }

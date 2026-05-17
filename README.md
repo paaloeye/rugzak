@@ -30,7 +30,13 @@ macOS Dock app which bridges [google/fuse-archive](https://github.com/google/fus
 ## Prerequisites
 
 ```bash
-brew install macfuse fuse-archive
+brew install macfuse fuse-archive macfuse
 ```
 
 Mounts appear under `~/Mounts/<archive-name>/`.
+
+## References
+
+- [SWIFT_DEFAULT_ACTOR_ISOLATION](https://www.avanderlee.com/concurrency/default-actor-isolation-in-swift-6-2/)
+- https://github.com/EmergeTools/SnapshotPreviews
+- https://sarunw.com/posts/detecting-xcode-previews/

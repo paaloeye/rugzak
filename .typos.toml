@@ -22,10 +22,11 @@ extend-ignore-words-re = [
 
 [default.extend-words]
 aesthetic = "æsthetic"
-# odf is a valid OpenDocument Format file extension, not a typo for "of"
-odf = "odf"
 reexamining = "reëxamining"
 re-examining = "reëxamining"
+
+# odf is a valid OpenDocument Format file extension, not a typo for "of"
+odf = "odf"
 
 [default.extend-identifiers]
 

@@ -64,3 +64,31 @@ final class ArchiveDropView: NSView {
         return items.filter { ArchiveManager.supportedExtensions.contains($0.pathExtension.lowercased()) }
     }
 }
+
+#Preview("Idle") {
+    DropTargetView(isTargeted: .constant(false))
+        .frame(width: 480, height: 320)
+}
+
+#Preview("Drag over") {
+    DropTargetView(isTargeted: .constant(true))
+        .frame(width: 480, height: 320)
+        .overlay {
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.accentColor, lineWidth: 3)
+                .background(
+                    Color.accentColor.opacity(0.08)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                )
+                .overlay {
+                    VStack(spacing: 8) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 32))
+                            .foregroundStyle(Color.accentColor)
+                        Text("Mount Archive")
+                            .font(.headline)
+                    }
+                }
+                .padding(8)
+        }
+}

@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "betty.lldb": {
+    "lldb": {
       "command": "jsonrpc-stdio-proxy",
       "args": [
         "--subsystem",

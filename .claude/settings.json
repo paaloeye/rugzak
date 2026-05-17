@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(log show *)",
+      "mcp__xcode__BuildProject",
+      "mcp__xcode__GetBuildLog",
+      "mcp__xcode__RenderPreview",
+      "mcp__xcode__XcodeListNavigatorIssues",
+      "mcp__xcode__XcodeListWindows",
+      "mcp__xcode__XcodeLS",
+      "mcp__xcode__XcodeMakeDir",
+      "mcp__xcode__XcodeMV",
+      "mcp__xcode__XcodeRefreshCodeIssuesInFile"
+    ]
+  },
+  "enabledMcpjsonServers": ["lldb", "xcode"]
+}

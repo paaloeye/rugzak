@@ -1,18 +1,11 @@
 # GOTCHA.md
 
+Common gotchas and pitfalls when working [Claude Code](https://claude.ai/code) in AI-aided fashion.
+
+This file provides guidance to Claude when it keeps making the same mistakes.
+
 > [!WARNING]
 > Read this before making any changes to the project.
-
-## App Sandbox
-
-App Sandbox is **disabled** (`ENABLE_APP_SANDBOX = NO`) for v0.1. This is intentional — `fuse-archive`
-and `umount` are spawned via `Process`, which requires unsandboxed access. Do not re-enable without
-also implementing a privileged XPC helper.
-
-## macOS Deployment Target
-
-This project targets **macOS 26** (Tahoe). APIs introduced in macOS 26 are fair game. Do not
-add `@available` guards for anything in macOS 26 or earlier.
 
 ## Xcode File Synchronisation
 
@@ -27,17 +20,26 @@ For v0.1, `fuse-archive` is expected on PATH (Homebrew install). `FuseProcess` c
 `/opt/homebrew/bin`, `/usr/local/bin`, and `$PATH` in that order. If none found, it throws a
 descriptive error surfaced in the UI. Bundled binary support is planned for v0.2.
 
-## Mount Reconciliation
+## Debugging Preview Runtime Crashes
 
-State reconciliation on launch uses `getmntinfo()`/`statfs` (Darwin syscall) — **not** `mount`
-shell output. This reads the kernel mount table directly. The filesystem type for macFUSE mounts
-is `macfuse` on macOS 26.
+Xcode's preview canvas shows a generic "may have crashed" error with no stack trace. To find the
+real crash site:
 
-## ~/Mounts Directory
+1. **Log stream** — run in a terminal _while_ triggering the preview:
+   ```
+   log stream --predicate 'process == "Zippo"' --debug --info --style compact
+   ```
+   Swift fatal errors print to `os_log` before the trap, so the exact file/line appears here
+   (e.g. `SwiftUI/TableViewListCore_Mac2.swift:<LINE_NUMBER>: Fatal error`).
 
-`ArchiveManager` creates `~/Mounts/<archive-name>/` before calling `fuse-archive`. If the directory
-already exists (e.g. from a previous run), it is reused. It is **not** deleted on unmount — only
-the FUSE mount is removed. The directory is left as a breadcrumb so the user can see what was there.
+## List crashes in SwiftUI Previews
+
+`List` on macOS is backed by `NSTableView` (`TableViewListCore_Mac2`). This crashes in the Xcode
+preview sandbox with a fatal error at a fixed line — the preview host process lacks the full
+`NSApplication` lifecycle the NSTableView bridge expects.
+
+**Fix:** use `ScrollView + LazyVStack + ForEach` instead of `List` in any view that will be
+previewed. The real app is unaffected; only the preview sandbox hits this.
 
 > [!CAUTION]
 > This file was generated with AI assistance.

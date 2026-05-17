@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "description": "Zippo",
   "keywords": [],
-  "author": [
-    "Paal Øye-Strømme"
-  ],
+  "author": "Paal Øye-Strømme <paal.o.eye@gmail.com> (https://github.com/paaloeye)",
   "scripts": {
     "fmt": "bun fmt:swift && bun fmt:docs",
     "fmt:swift": "xcrun swift-format format --in-place",

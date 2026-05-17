@@ -2,10 +2,24 @@ import AppKit
 import Combine
 import DiskArbitration
 import Foundation
+import os.log
 
 @MainActor
 final class ArchiveManager: ObservableObject {
-    static let shared = ArchiveManager()
+
+    private static let logger = Logger(
+        subsystem: Bundle.main.bundleIdentifier!,
+        category: String(describing: ArchiveManager.self)
+    )
+
+    static let shared: ArchiveManager = {
+        #if DEBUG
+            if Debug.isPreview {
+                return ArchiveManager(preview: ())
+            }
+        #endif
+        return ArchiveManager()
+    }()
 
     @Published private(set) var mounts: [MountedArchive] = []
     @Published var errorMessage: String?
@@ -140,4 +154,34 @@ final class ArchiveManager: ObservableObject {
         }
         return candidate
     }
+
+    // MARK: - Preview
+    // only needed for preview in Xcode
+
+    private init(preview _: ()) {}
+
+    static func preview(mounts: [MountedArchive] = [], error: String? = nil) -> ArchiveManager {
+        let m = ArchiveManager(preview: ())
+        m.mounts = mounts
+        m.errorMessage = error
+        return m
+    }
+
+    static func previewWithMounts() -> ArchiveManager {
+        preview(mounts: [
+            MountedArchive(
+                id: UUID(),
+                archivePath: URL(fileURLWithPath: "/Downloads/project.zip"),
+                mountPoint: URL(fileURLWithPath: "/Mounts/project"),
+                mountedAt: .now
+            ),
+            MountedArchive(
+                id: UUID(),
+                archivePath: URL(fileURLWithPath: "/Downloads/backup.tar.gz"),
+                mountPoint: URL(fileURLWithPath: "/Mounts/backup"),
+                mountedAt: .now
+            ),
+        ])
+    }
+
 }
