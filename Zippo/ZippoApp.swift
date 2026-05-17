@@ -10,6 +10,9 @@ struct ZippoApp: App {
                 .environmentObject(ArchiveManager.shared)
         }
         .windowResizability(.contentSize)
+        .commands {
+            CommandGroup(replacing: .newItem) {}
+        }
     }
 }
 
@@ -18,5 +21,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         for url in urls {
             ArchiveManager.shared.mount(url)
         }
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows: Bool) -> Bool {
+        if !hasVisibleWindows {
+            sender.windows.first?.makeKeyAndOrderFront(nil)
+        }
+        return true
     }
 }

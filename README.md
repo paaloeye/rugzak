@@ -14,12 +14,12 @@ macOS Dock app which bridges [google/fuse-archive](https://github.com/google/fus
 - [x] `Process` interface with `umount` binary
 - [x] `Process` interface with `mount` to reconcile current state: `darwin` <-> `UI`
 - [x] support unencrypted archives
-- [ ] open in finder and open in Terminal buttons (Ghostty support if possible)
-- [ ] confirm alert for unmount
+- [x] open in finder and open in Terminal buttons (Ghostty support if possible)
+- [x] confirm alert for unmount
+- [x] `DiskArbitration` for event-driven notification on mounted / umounted archives
 - bugs:
   - [ ] there should be only one window (singleton architecture)
-  - [ ] _fuse-mounted_ archives outside of Zippo should be enumerated
-  - [ ] _fuse-mounted_ archives outside of Zippo should be enumerated
+  - [x] _fuse-mounted_ archives outside of Zippo should be enumerated
 - **version 0.2**
 - [ ] support encrypted archives (full UI)
 

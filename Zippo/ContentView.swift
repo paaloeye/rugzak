@@ -89,6 +89,7 @@ struct ContentView: View {
 private struct MountRow: View {
     let archive: MountedArchive
     @EnvironmentObject var manager: ArchiveManager
+    @State private var showingUnmountConfirm = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -112,8 +113,24 @@ private struct MountRow: View {
                 .font(.caption)
                 .foregroundStyle(.tertiary)
 
+            Button {
+                manager.openInFinder(archive)
+            } label: {
+                Image(systemName: "folder")
+            }
+            .buttonStyle(.borderless)
+            .help("Open in Finder")
+
+            Button {
+                manager.openInTerminal(archive)
+            } label: {
+                Image(systemName: "terminal")
+            }
+            .buttonStyle(.borderless)
+            .help("Open in Terminal")
+
             Button("Unmount") {
-                manager.unmount(archive)
+                showingUnmountConfirm = true
             }
             .buttonStyle(.bordered)
             .controlSize(.small)
@@ -121,7 +138,19 @@ private struct MountRow: View {
         .padding(.vertical, 4)
         .contentShape(Rectangle())
         .onTapGesture(count: 2) {
-            NSWorkspace.shared.open(archive.mountPoint)
+            manager.openInFinder(archive)
+        }
+        .confirmationDialog(
+            "Unmount \(archive.archivePath.lastPathComponent)?",
+            isPresented: $showingUnmountConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Unmount", role: .destructive) {
+                manager.unmount(archive)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(archive.mountPoint.path)
         }
     }
 }

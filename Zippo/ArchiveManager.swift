@@ -1,5 +1,6 @@
 import AppKit
 import Combine
+import DiskArbitration
 import Foundation
 
 @MainActor
@@ -16,9 +17,12 @@ final class ArchiveManager: ObservableObject {
 
     static let supportedExtensions: Set<String> = ["zip", "tar", "gz", "tgz", "bz2", "xz", "tbz", "tbz2"]
 
+    private var daSession: DASession?
+
     private init() {
         createMountsDirectoryIfNeeded()
         reconcile()
+        setupDiskArbitration()
     }
 
     func mount(_ archiveURL: URL) {
@@ -50,9 +54,56 @@ final class ArchiveManager: ObservableObject {
         }
     }
 
-    private func reconcile() {
-        let found = MountReconciler.activeMounts(under: mountsDirectory)
-        mounts = found
+    func openInFinder(_ archive: MountedArchive) {
+        NSWorkspace.shared.open(archive.mountPoint)
+    }
+
+    func openInTerminal(_ archive: MountedArchive) {
+        let ghosttyBundleId = "com.mitchellh.ghostty"
+        if let ghosttyAppURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: ghosttyBundleId) {
+            let ghosttyBinary = ghosttyAppURL.appendingPathComponent("Contents/MacOS/ghostty")
+            if FileManager.default.isExecutableFile(atPath: ghosttyBinary.path) {
+                let process = Process()
+                process.executableURL = ghosttyBinary
+                process.arguments = ["--working-directory=\(archive.mountPoint.path)"]
+                try? process.run()
+                return
+            }
+        }
+        let path = archive.mountPoint.path.replacingOccurrences(of: "'", with: "\\'")
+        let src = "tell application \"Terminal\" to activate\ntell application \"Terminal\" to do script \"cd '\(path)'\""
+        NSAppleScript(source: src)?.executeAndReturnError(nil)
+    }
+
+    func reconcile() {
+        let found = MountReconciler.activeFuseMounts()
+        let foundPaths = Set(found.map { $0.mountPoint.standardized })
+        mounts.removeAll { !foundPaths.contains($0.mountPoint.standardized) }
+        let knownPaths = Set(mounts.map { $0.mountPoint.standardized })
+        for mount in found where !knownPaths.contains(mount.mountPoint.standardized) {
+            mounts.append(mount)
+        }
+    }
+
+    private func setupDiskArbitration() {
+        guard let session = DASessionCreate(kCFAllocatorDefault) else { return }
+        daSession = session
+        DASessionScheduleWithRunLoop(session, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+        let ctx = Unmanaged.passUnretained(self).toOpaque()
+        DARegisterDiskAppearedCallback(
+            session, nil,
+            { _, context in
+                guard let ctx = context else { return }
+                let mgr = Unmanaged<ArchiveManager>.fromOpaque(ctx).takeUnretainedValue()
+                Task { @MainActor in mgr.reconcile() }
+            }, ctx)
+        DARegisterDiskDisappearedCallback(
+            session, nil,
+            { _, context in
+                guard let ctx = context else { return }
+                let mgr = Unmanaged<ArchiveManager>.fromOpaque(ctx).takeUnretainedValue()
+                Task { @MainActor in mgr.reconcile() }
+            }, ctx)
     }
 
     private func createMountsDirectoryIfNeeded() {
