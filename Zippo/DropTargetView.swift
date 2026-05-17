@@ -1,6 +1,7 @@
 import AppKit
 import SwiftUI
 
+@MainActor
 struct DropTargetView: NSViewRepresentable {
     @Binding var isTargeted: Bool
 
@@ -42,10 +43,8 @@ final class ArchiveDropView: NSView {
         isTargetedBinding?.wrappedValue = false
         let urls = archiveURLs(from: sender)
         guard !urls.isEmpty else { return false }
-        Task { @MainActor in
-            for url in urls {
-                ArchiveManager.shared.mount(url)
-            }
+        for url in urls {
+            ArchiveManager.shared.mount(url)
         }
         return true
     }

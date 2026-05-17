@@ -39,10 +39,5 @@ is `macfuse` on macOS 26.
 already exists (e.g. from a previous run), it is reused. It is **not** deleted on unmount — only
 the FUSE mount is removed. The directory is left as a breadcrumb so the user can see what was there.
 
-## Swift Concurrency
-
-`SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor` is set project-wide. All types default to `@MainActor`.
-Use `nonisolated` explicitly where needed (e.g. pure value types, background workers).
-
 > [!CAUTION]
 > This file was generated with AI assistance.

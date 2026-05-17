@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 struct ContentView: View {
     @EnvironmentObject var manager: ArchiveManager
     @State private var isTargeted = false
@@ -86,6 +87,7 @@ struct ContentView: View {
     }
 }
 
+@MainActor
 private struct MountRow: View {
     let archive: MountedArchive
     @EnvironmentObject var manager: ArchiveManager
