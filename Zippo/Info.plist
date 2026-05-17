@@ -5,35 +5,67 @@
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeName</key>
+			<string>ZIP Archive</string>
 			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 			<key>LSItemContentTypes</key>
 			<array>
-				<string>com.example.plain-text</string>
+				<string>public.zip-archive</string>
 			</array>
-			<key>NSUbiquitousDocumentUserActivityType</key>
-			<string>$(PRODUCT_BUNDLE_IDENTIFIER).exampledocument</string>
 		</dict>
-	</array>
-	<key>UTImportedTypeDeclarations</key>
-	<array>
 		<dict>
-			<key>UTTypeConformsTo</key>
+			<key>CFBundleTypeName</key>
+			<string>Gzip Compressed Tar Archive</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
 			<array>
-				<string>public.plain-text</string>
+				<string>org.gnu.gnu-tar-gzip-archive</string>
 			</array>
-			<key>UTTypeDescription</key>
-			<string>Example Text</string>
-			<key>UTTypeIdentifier</key>
-			<string>com.example.plain-text</string>
-			<key>UTTypeTagSpecification</key>
-			<dict>
-				<key>public.filename-extension</key>
-				<array>
-					<string>exampletext</string>
-				</array>
-			</dict>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Tar Archive</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.tar-archive</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Bzip2 Compressed Tar Archive</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.bzip2-archive</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>XZ Compressed Archive</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.xz-archive</string>
+			</array>
 		</dict>
 	</array>
+	<key>NSRequiresAquaSystemAppearance</key>
+	<false/>
 </dict>
 </plist>
