@@ -1,0 +1,5 @@
+.editorconfig
+.gitignore
+bun.lock
+**/*.xcassets/**/Contents.json
+**/*.icon/**/icon.json

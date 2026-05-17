@@ -1,0 +1,21 @@
+{
+  "name": "workspace",
+  "version": "0.1.0",
+  "description": "Zippo",
+  "keywords": [],
+  "author": [
+    "Paal Øye-Strømme"
+  ],
+  "scripts": {
+    "fmt": "bun fmt:swift && bun fmt:docs",
+    "fmt:swift": "xcrun swift-format format --in-place",
+    "fmt:docs": "prettier --write --ignore-unknown",
+    "fmt:docs:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "3.3.3"
+  },
+  "prettier": {
+    "plugins": []
+  }
+}

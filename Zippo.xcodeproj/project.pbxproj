@@ -8,6 +8,7 @@
 
 /* Begin PBXFileReference section */
 		8A0380C12FB70F2600814CD3 /* Zippo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zippo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A0380D32FB7104600814CD3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -45,6 +46,7 @@
 		8A0380B82FB70F2600814CD3 = {
 			isa = PBXGroup;
 			children = (
+				8A0380D32FB7104600814CD3 /* README.md */,
 				8A0380C32FB70F2600814CD3 /* Zippo */,
 				8A0380C22FB70F2600814CD3 /* Products */,
 			);
