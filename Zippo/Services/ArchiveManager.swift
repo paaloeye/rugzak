@@ -7,7 +7,7 @@ import os.log
 @MainActor
 final class ArchiveManager: ObservableObject {
 
-    private static let logger = Logger(
+    private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
         category: String(describing: ArchiveManager.self)
     )
@@ -94,19 +94,18 @@ final class ArchiveManager: ObservableObject {
     }
 
     func openInTerminal(_ archive: MountedArchive) {
-        let ghosttyBundleId = "com.mitchellh.ghostty"
-        if let ghosttyAppURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: ghosttyBundleId) {
-            let ghosttyBinary = ghosttyAppURL.appendingPathComponent("Contents/MacOS/ghostty")
-            if FileManager.default.isExecutableFile(atPath: ghosttyBinary.path) {
-                let process = Process()
-                process.executableURL = ghosttyBinary
-                process.arguments = ["--working-directory=\(archive.mountPoint.path)"]
-                try? process.run()
-                return
-            }
-        }
+        let pb = NSPasteboard(name: NSPasteboard.Name(Bundle.main.bundleIdentifier!))
+        pb.clearContents()
+        pb.writeObjects([archive.mountPoint as NSURL])
+
+        logger.debug("Opening \(archive.mountPoint.path) in Ghostty")
+        if NSPerformService("New Ghostty Tab Here", pb) { return }
+
+        // Terminal fallback
         let path = archive.mountPoint.path.replacingOccurrences(of: "'", with: "\\'")
         let src = "tell application \"Terminal\" to activate\ntell application \"Terminal\" to do script \"cd '\(path)'\""
+
+        logger.debug("Opening \(archive.mountPoint.path) in Terminal")
         NSAppleScript(source: src)?.executeAndReturnError(nil)
     }
 
@@ -125,6 +124,7 @@ final class ArchiveManager: ObservableObject {
         daSession = session
         DASessionScheduleWithRunLoop(session, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
         let ctx = Unmanaged.passUnretained(self).toOpaque()
+
         DARegisterDiskAppearedCallback(
             session, nil,
             { _, context in
@@ -132,6 +132,7 @@ final class ArchiveManager: ObservableObject {
                 let mgr = Unmanaged<ArchiveManager>.fromOpaque(ctx).takeUnretainedValue()
                 Task { @MainActor in mgr.reconcile() }
             }, ctx)
+
         DARegisterDiskDisappearedCallback(
             session, nil,
             { _, context in
