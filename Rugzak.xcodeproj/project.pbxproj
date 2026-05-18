@@ -6,20 +6,9 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		8A0643882FBB57220021C932 /* colours.md in Resources */ = {isa = PBXBuildFile; fileRef = 8A0643852FBB57220021C932 /* colours.md */; };
-		8A0643892FBB57220021C932 /* RugzakAppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 8A0643862FBB57220021C932 /* RugzakAppIcon.icon */; };
-		8A06438A2FBB57220021C932 /* RugzakAppIconDebug.icon in Resources */ = {isa = PBXBuildFile; fileRef = 8A06438B2FBB57220021C932 /* RugzakAppIconDebug.icon */; };
-		8A21452A2FBB767E00929A97 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A2145292FBB767E00929A97 /* Assets.xcassets */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		8A0380C12FB70F2600814CD3 /* Rugzak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rugzak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A0380D32FB7104600814CD3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		8A0643852FBB57220021C932 /* colours.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = colours.md; sourceTree = "<group>"; };
-		8A0643862FBB57220021C932 /* RugzakAppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = RugzakAppIcon.icon; sourceTree = "<group>"; };
-		8A06438B2FBB57220021C932 /* RugzakAppIconDebug.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = RugzakAppIconDebug.icon; sourceTree = "<group>"; };
-		8A2145292FBB767E00929A97 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Rugzak/Assets.xcassets; sourceTree = "<group>"; };
 		8A42EE322F4E40C40043865A /* GeneratedBuildInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = GeneratedBuildInfo.xcconfig; path = Config/GeneratedBuildInfo.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -42,6 +31,11 @@
 			path = Rugzak;
 			sourceTree = "<group>";
 		};
+		8A2146342FBB821500929A97 /* Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,10 +54,9 @@
 			children = (
 				8A0380D32FB7104600814CD3 /* README.md */,
 				8A0380C32FB70F2600814CD3 /* Rugzak */,
+				8A2146342FBB821500929A97 /* Resources */,
 				8A0380C22FB70F2600814CD3 /* Products */,
-				8A0643872FBB57220021C932 /* Resources */,
 				8A42EE322F4E40C40043865A /* GeneratedBuildInfo.xcconfig */,
-				8A2145292FBB767E00929A97 /* Assets.xcassets */,
 			);
 			sourceTree = "<group>";
 		};
@@ -73,16 +66,6 @@
 				8A0380C12FB70F2600814CD3 /* Rugzak.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		8A0643872FBB57220021C932 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				8A0643852FBB57220021C932 /* colours.md */,
-				8A0643862FBB57220021C932 /* RugzakAppIcon.icon */,
-				8A06438B2FBB57220021C932 /* RugzakAppIconDebug.icon */,
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -103,6 +86,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				8A0380C32FB70F2600814CD3 /* Rugzak */,
+				8A2146342FBB821500929A97 /* Resources */,
 			);
 			name = Rugzak;
 			packageProductDependencies = (
@@ -150,10 +134,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8A0643882FBB57220021C932 /* colours.md in Resources */,
-				8A21452A2FBB767E00929A97 /* Assets.xcassets in Resources */,
-				8A0643892FBB57220021C932 /* RugzakAppIcon.icon in Resources */,
-				8A06438A2FBB57220021C932 /* RugzakAppIconDebug.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
