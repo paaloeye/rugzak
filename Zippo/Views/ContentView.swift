@@ -118,10 +118,6 @@ private struct MountRow: View {
 
             Spacer()
 
-            Text(archive.mountedAt.formatted(.relative(presentation: .numeric)))
-                .font(.system(size: fontSize - 2))
-                .foregroundStyle(.tertiary)
-
             Button {
                 manager.openInFinder(archive)
             } label: {

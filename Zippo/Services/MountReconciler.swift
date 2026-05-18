@@ -18,8 +18,7 @@ struct MountReconciler {
                 MountedArchive(
                     id: UUID(),
                     archivePath: URL(fileURLWithPath: mountFrom),
-                    mountPoint: URL(fileURLWithPath: mountOn),
-                    mountedAt: .now
+                    mountPoint: URL(fileURLWithPath: mountOn)
                 ))
         }
         return result

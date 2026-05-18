@@ -68,7 +68,7 @@ final class ArchiveManager: ObservableObject {
             do {
                 try FileManager.default.createDirectory(at: mountPoint, withIntermediateDirectories: true)
                 try await FuseProcess.mount(archive: archiveURL, mountPoint: mountPoint)
-                let archive = MountedArchive(id: UUID(), archivePath: archiveURL, mountPoint: mountPoint, mountedAt: .now)
+                let archive = MountedArchive(id: UUID(), archivePath: archiveURL, mountPoint: mountPoint)
                 mounts.append(archive)
                 errorMessage = nil
             } catch {
@@ -173,14 +173,12 @@ final class ArchiveManager: ObservableObject {
             MountedArchive(
                 id: UUID(),
                 archivePath: URL(fileURLWithPath: "/Downloads/project.zip"),
-                mountPoint: URL(fileURLWithPath: "/Mounts/project"),
-                mountedAt: .now
+                mountPoint: URL(fileURLWithPath: "/Mounts/project")
             ),
             MountedArchive(
                 id: UUID(),
                 archivePath: URL(fileURLWithPath: "/Downloads/backup.tar.gz"),
-                mountPoint: URL(fileURLWithPath: "/Mounts/backup"),
-                mountedAt: .now
+                mountPoint: URL(fileURLWithPath: "/Mounts/backup")
             ),
         ])
     }

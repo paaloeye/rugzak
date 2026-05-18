@@ -12,9 +12,6 @@ struct MountedArchive: Identifiable, Sendable {
     /// Directory where the archive contents are exposed by macFUSE.
     let mountPoint: URL
 
-    /// Wall-clock time the mount was registered in-process.
-    let mountedAt: Date
-
     /// Human-readable name shown in the mount list.
     ///
     /// `archivePath.lastPathComponent` is a macFUSE device string (e.g. `fuse-archive@macfuse0`)
