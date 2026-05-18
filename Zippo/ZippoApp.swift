@@ -11,7 +11,7 @@ struct ZippoApp: App {
         }
         .windowResizability(.contentSize)
         .commands {
-            FontSizeCommands()
+            ZippoCommands()
         }
     }
 }

@@ -2,6 +2,7 @@ import Foundation
 
 /// A single archive currently mounted via fuse-archive.
 struct MountedArchive: Identifiable, Sendable {
+
     /// Stable identity used by SwiftUI diffing and unmount look-ups.
     let id: UUID
 

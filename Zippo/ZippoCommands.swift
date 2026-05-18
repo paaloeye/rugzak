@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct FontSizeCommands: Commands {
+struct ZippoCommands: Commands {
     @AppStorage("rowFontSize") private var fontSize: Double = RowFontSizeKey.defaultValue
 
     private static let defaultSize: Double = RowFontSizeKey.defaultValue
