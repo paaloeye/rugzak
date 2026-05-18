@@ -183,37 +183,37 @@ final class ArchiveManager: ObservableObject {
                 MountedArchive(
                     id: UUID(),
                     archivePath: URL(fileURLWithPath: "/Downloads/homebrew-core-20260518.tar.gz"),
-                    mountPoint: URL(fileURLWithPath: "/Mounts/homebrew-core-20260518")
+                    mountPoint: URL(fileURLWithPath: "~/Mounts/homebrew-core-20260518")
                 ),
                 MountedArchive(
                     id: UUID(),
                     archivePath: URL(fileURLWithPath: "/Archives/swift-6.1-RELEASE.tar.gz"),
-                    mountPoint: URL(fileURLWithPath: "/Mounts/swift-6.1-RELEASE")
+                    mountPoint: URL(fileURLWithPath: "~/Mounts/swift-6.1-RELEASE")
                 ),
                 MountedArchive(
                     id: UUID(),
                     archivePath: URL(fileURLWithPath: "/Downloads/Xcode_16.3.xip"),
-                    mountPoint: URL(fileURLWithPath: "/Mounts/Xcode_16.3")
+                    mountPoint: URL(fileURLWithPath: "~/Mounts/Xcode_16.3")
                 ),
                 MountedArchive(
                     id: UUID(),
                     archivePath: URL(fileURLWithPath: "/Downloads/linux-6.9.tar.xz"),
-                    mountPoint: URL(fileURLWithPath: "/Mounts/linux-6.9")
+                    mountPoint: URL(fileURLWithPath: "~/Mounts/linux-6.9")
                 ),
                 MountedArchive(
                     id: UUID(),
                     archivePath: URL(fileURLWithPath: "/tmp/macOS-Sequoia-15.5.ipsw"),
-                    mountPoint: URL(fileURLWithPath: "/Mounts/macOS-Sequoia-15.5")
+                    mountPoint: URL(fileURLWithPath: "~/Mounts/macOS-Sequoia-15.5")
                 ),
                 MountedArchive(
                     id: UUID(),
                     archivePath: URL(fileURLWithPath: "/Downloads/helix-25.01-x86_64-macos.tar.xz"),
-                    mountPoint: URL(fileURLWithPath: "/Mounts/helix-25.01-x86_64-macos")
+                    mountPoint: URL(fileURLWithPath: "~/Mounts/helix-25.01-x86_64-macos")
                 ),
                 MountedArchive(
                     id: UUID(),
                     archivePath: URL(fileURLWithPath: "/Downloads/dotfiles-backup-2026.tar.bz2"),
-                    mountPoint: URL(fileURLWithPath: "/Mounts/dotfiles-backup-2026")
+                    mountPoint: URL(fileURLWithPath: "~/Mounts/dotfiles-backup-2026")
                 ),
             ])
         }

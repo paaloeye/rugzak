@@ -187,49 +187,53 @@ private struct MountRow: View {
 
 // MARK: - Preview
 
-#Preview("Empty state") {
-    ContentView()
-        .environmentObject(ArchiveManager.preview())
-}
+#if DEBUG
 
-#Preview("With mounts") {
-    ContentView()
-        .environmentObject(ArchiveManager.previewWithMounts())
-}
+    #Preview("Empty state") {
+        ContentView()
+            .environmentObject(ArchiveManager.preview())
+    }
 
-#Preview("With error") {
-    ContentView()
-        .environmentObject(
-            ArchiveManager.preview(
-                error: "fuse-archive not found. Install it with: brew install fuse-archive"
-            ))
-}
+    #Preview("With mounts") {
+        ContentView()
+            .environmentObject(ArchiveManager.previewWithMounts())
+    }
 
-#Preview("Drop targeted — accepting") {
-    ContentView(dropState: .accepting)
-        .environmentObject(ArchiveManager.preview())
-}
+    #Preview("With error") {
+        ContentView()
+            .environmentObject(
+                ArchiveManager.preview(
+                    error: "fuse-archive not found. Install it with: brew install fuse-archive"
+                ))
+    }
 
-#Preview("Drop targeted — rejecting") {
-    ContentView(dropState: .rejecting)
-        .environmentObject(ArchiveManager.preview())
-}
+    #Preview("Drop targeted — accepting") {
+        ContentView(dropState: .accepting)
+            .environmentObject(ArchiveManager.preview())
+    }
 
-#Preview("Drop targeted — already mounted") {
-    ContentView(dropState: .alreadyMounted)
-        .environmentObject(ArchiveManager.previewWithMounts())
-}
+    #Preview("Drop targeted — rejecting") {
+        ContentView(dropState: .rejecting)
+            .environmentObject(ArchiveManager.preview())
+    }
 
-// MARK - README
+    #Preview("Drop targeted — already mounted") {
+        ContentView(dropState: .alreadyMounted)
+            .environmentObject(ArchiveManager.previewWithMounts())
+    }
 
-#Preview("Rugzak") {
-    ContentView()
-        .environmentObject(ArchiveManager.previewWithMounts())
-        .preferredColorScheme(.light)
-}
+    // MARK - README
 
-#Preview("Rugzak") {
-    ContentView()
-        .environmentObject(ArchiveManager.previewWithMounts())
-        .preferredColorScheme(.dark)
-}
+    #Preview("Rugzak") {
+        ContentView()
+            .environmentObject(ArchiveManager.previewWithMounts())
+            .preferredColorScheme(.light)
+    }
+
+    #Preview("Rugzak") {
+        ContentView()
+            .environmentObject(ArchiveManager.previewWithMounts())
+            .preferredColorScheme(.dark)
+    }
+
+#endif

@@ -116,8 +116,12 @@ cd "${PROJECT_ROOT}"
 # Build  app
 echo -e "${YELLOW}Building ${APP_NAME}.app (${BUILD_CONFIG})...${NC}"
 
-if [ "$SIGN" = true ] || [ "$DEV_SIGN" = true ]; then
+if [ "$SIGN" = true ]; then
     echo "  Code signing with: ${SIGNING_IDENTITY}"
+    echo ""
+    echo -e "${BLUE}Available signing identities:${NC}"
+    security find-identity -v -p codesigning
+    echo ""
     xcodebuild \
         -project "${XCODE_PROJECT}" \
         -scheme "${APP_NAME}" \
@@ -125,8 +129,20 @@ if [ "$SIGN" = true ] || [ "$DEV_SIGN" = true ]; then
         -derivedDataPath "${DERIVED_DATA}" \
         -arch arm64 -arch x86_64 \
         build \
+        CODE_SIGN_STYLE=Manual \
         CODE_SIGN_IDENTITY="${SIGNING_IDENTITY}" \
         CODE_SIGNING_REQUIRED=YES \
+        | eval "$GREP_FILTER"
+elif [ "$DEV_SIGN" = true ]; then
+    echo "  Code signing: automatic (Apple Development)"
+    xcodebuild \
+        -project "${XCODE_PROJECT}" \
+        -scheme "${APP_NAME}" \
+        -configuration "${BUILD_CONFIG}" \
+        -derivedDataPath "${DERIVED_DATA}" \
+        -arch arm64 -arch x86_64 \
+        build \
+        CODE_SIGN_STYLE=Automatic \
         | eval "$GREP_FILTER"
 else
     xcodebuild \
@@ -145,6 +161,9 @@ BUILD_STATUS=${PIPESTATUS[0]}
 
 if [ $BUILD_STATUS -ne 0 ]; then
     echo -e "${RED}✗ ${APP_NAME}.app build failed${NC}"
+    echo ""
+    echo -e "${YELLOW}Available signing identities:${NC}"
+    security find-identity -v -p codesigning
     exit 1
 fi
 
