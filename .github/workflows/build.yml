@@ -8,12 +8,14 @@ on:
 
 jobs:
   build:
-    name: "Build"
+    name: "Build (${{ matrix.configuration }})"
     timeout-minutes: 10
     runs-on: macos-latest
 
     strategy:
-      fail-fast: true
+      fail-fast: false
+      matrix:
+        configuration: [Debug, Release]
 
     steps:
       - name: Checkout repository
@@ -44,8 +46,13 @@ jobs:
       - name: Set build
         run: agvtool new-version ${{ github.run_number }}
 
-      - name: Build
+      - name: Build info
         run: ./scripts/generate_build_info.sh
 
       - name: Build
-        run: ./scripts/build.sh --debug
+        run: |
+          if [ "${{ matrix.configuration }}" = "Debug" ]; then
+            ./scripts/build.sh --debug
+          else
+            ./scripts/build.sh
+          fi
