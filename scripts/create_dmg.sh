@@ -156,8 +156,8 @@ echo ""
 # Extract version information
 VERSION=$(defaults read "${APP_PATH}/Contents/Info.plist" CFBundleShortVersionString 2>/dev/null)
 BUILD=$(defaults read "${APP_PATH}/Contents/Info.plist" CFBundleVersion 2>/dev/null)
-GIT_COMMIT_FROM_PLIST=$(defaults read "${APP_PATH}/Contents/Info.plist" FEGitCommitHash 2>/dev/null || echo "unknown")
-GIT_BUILD_STATUS_FROM_PLIST=$(defaults read "${APP_PATH}/Contents/Info.plist" FEGitBuildStatus 2>/dev/null || echo "unknown")
+GIT_COMMIT_FROM_PLIST=$(defaults read "${APP_PATH}/Contents/Info.plist" GitCommitHash 2>/dev/null || echo "unknown")
+GIT_BUILD_STATUS_FROM_PLIST=$(defaults read "${APP_PATH}/Contents/Info.plist" GitBuildStatus 2>/dev/null || echo "unknown")
 
 echo -e "${BLUE}Version Information:${NC}"
 echo "  Version: ${VERSION}"

@@ -1,0 +1,124 @@
+{
+  "fill" : {
+    "automatic-gradient" : "display-p3:0.32690,0.67285,0.95020,1.00000"
+  },
+  "groups" : [
+    {
+      "blur-material" : null,
+      "hidden" : false,
+      "layers" : [
+        {
+          "hidden" : false,
+          "image-name" : "rugzak-icon-layer-4.svg",
+          "name" : "rugzak-icon-layer-4",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              -5.684341886080802e-14,
+              -21.596299292859385
+            ]
+          }
+        },
+        {
+          "hidden" : false,
+          "image-name" : "rugzak-icon-layer-3.svg",
+          "name" : "rugzak-icon-layer-3",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              -1.7053025658242404e-13,
+              164.90370070714062
+            ]
+          }
+        },
+        {
+          "hidden" : false,
+          "image-name" : "rugzak-icon-layer-2.svg",
+          "name" : "rugzak-icon-layer-2",
+          "position" : {
+            "scale" : 0.88,
+            "translation-in-points" : [
+              0,
+              -0.3866981348904801
+            ]
+          }
+        }
+      ],
+      "position" : {
+        "scale" : 1.14,
+        "translation-in-points" : [
+          0,
+          0
+        ]
+      },
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : false,
+        "value" : 0
+      }
+    },
+    {
+      "layers" : [
+        {
+          "blend-mode" : "normal",
+          "fill" : "automatic",
+          "hidden" : false,
+          "image-name" : "rugzak-icon-layer-1.svg",
+          "name" : "rugzak-icon-layer-1",
+          "opacity" : 1,
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              -1.7053025658242404e-13,
+              -33.000000000000114
+            ]
+          }
+        }
+      ],
+      "lighting" : "individual",
+      "name" : "Group",
+      "position" : {
+        "scale" : 1.31,
+        "translation-in-points" : [
+          0,
+          0
+        ]
+      },
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.6
+      },
+      "specular" : true,
+      "translucency" : {
+        "enabled" : false,
+        "value" : 0
+      }
+    },
+    {
+      "blur-material" : 0.3,
+      "hidden" : false,
+      "layers" : [
+
+      ],
+      "name" : "Group",
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.2
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.35
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

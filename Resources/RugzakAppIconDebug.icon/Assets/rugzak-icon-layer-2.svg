@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Layer 2: Front pocket — darker accent panel with stitched border -->
+<svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1"
+     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>rugzak-icon-layer-2</title>
+    <defs>
+        <linearGradient x1="20%" y1="0%" x2="80%" y2="100%" id="pocketGradient">
+            <stop stop-color="#253660" offset="0%"/>
+            <stop stop-color="#1A2744" offset="100%"/>
+        </linearGradient>
+    </defs>
+    <g id="rugzak-icon-layer-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+
+        <!-- Front pocket body -->
+        <rect x="330" y="560" width="364" height="240" rx="36" ry="36"
+              fill="url(#pocketGradient)"/>
+
+        <!-- Stitched dashed border around pocket -->
+        <rect x="346" y="576" width="332" height="208" rx="28" ry="28"
+              fill="none"
+              stroke="#3D5A99"
+              stroke-width="3"
+              stroke-dasharray="12,8"
+              opacity="0.7"/>
+
+        <!-- Small zip pull on pocket -->
+        <rect x="497" y="558" width="30" height="8" rx="4" ry="4"
+              fill="#C8820A"/>
+        <rect x="505" y="548" width="14" height="16" rx="3" ry="3"
+              fill="#F5A623"/>
+
+        <!-- Pocket zipper teeth row -->
+        <line x1="340" y1="562" x2="684" y2="562"
+              stroke="#C8820A" stroke-width="3" opacity="0.6"/>
+
+        <!-- Horizontal seam lines (stitching details) -->
+        <line x1="346" y1="635" x2="678" y2="635"
+              stroke="#3D5A99" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.4"/>
+        <line x1="346" y1="710" x2="678" y2="710"
+              stroke="#3D5A99" stroke-width="1.5" stroke-dasharray="6,6" opacity="0.4"/>
+    </g>
+</svg>

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		8A0643882FBB57220021C932 /* colours.md in Resources */ = {isa = PBXBuildFile; fileRef = 8A0643852FBB57220021C932 /* colours.md */; };
 		8A0643892FBB57220021C932 /* RugzakAppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 8A0643862FBB57220021C932 /* RugzakAppIcon.icon */; };
+		8A06438A2FBB57220021C932 /* RugzakAppIconDebug.icon in Resources */ = {isa = PBXBuildFile; fileRef = 8A06438B2FBB57220021C932 /* RugzakAppIconDebug.icon */; };
 		8A21452A2FBB767E00929A97 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A2145292FBB767E00929A97 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -17,6 +18,7 @@
 		8A0380D32FB7104600814CD3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		8A0643852FBB57220021C932 /* colours.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = colours.md; sourceTree = "<group>"; };
 		8A0643862FBB57220021C932 /* RugzakAppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = RugzakAppIcon.icon; sourceTree = "<group>"; };
+		8A06438B2FBB57220021C932 /* RugzakAppIconDebug.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = RugzakAppIconDebug.icon; sourceTree = "<group>"; };
 		8A2145292FBB767E00929A97 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Rugzak/Assets.xcassets; sourceTree = "<group>"; };
 		8A42EE322F4E40C40043865A /* GeneratedBuildInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = GeneratedBuildInfo.xcconfig; path = Config/GeneratedBuildInfo.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -78,6 +80,7 @@
 			children = (
 				8A0643852FBB57220021C932 /* colours.md */,
 				8A0643862FBB57220021C932 /* RugzakAppIcon.icon */,
+				8A06438B2FBB57220021C932 /* RugzakAppIconDebug.icon */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -150,6 +153,7 @@
 				8A0643882FBB57220021C932 /* colours.md in Resources */,
 				8A21452A2FBB767E00929A97 /* Assets.xcassets in Resources */,
 				8A0643892FBB57220021C932 /* RugzakAppIcon.icon in Resources */,
+				8A06438A2FBB57220021C932 /* RugzakAppIconDebug.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,7 +197,7 @@
 		8A0380CF2FB70F2700814CD3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = RugzakAppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = RugzakAppIconDebug;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;

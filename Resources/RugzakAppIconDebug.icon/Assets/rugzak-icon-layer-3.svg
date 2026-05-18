@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Layer 3: Main zipper — amber gold teeth and pull tab along the top arc -->
+<svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1"
+     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>rugzak-icon-layer-3</title>
+    <defs>
+        <linearGradient x1="0%" y1="50%" x2="100%" y2="50%" id="zipperTrack">
+            <stop stop-color="#C8820A" offset="0%"/>
+            <stop stop-color="#F5A623" offset="50%"/>
+            <stop stop-color="#C8820A" offset="100%"/>
+        </linearGradient>
+        <linearGradient x1="0%" y1="0%" x2="0%" y2="100%" id="pullTab">
+            <stop stop-color="#FFD060" offset="0%"/>
+            <stop stop-color="#C8820A" offset="100%"/>
+        </linearGradient>
+    </defs>
+    <g id="rugzak-icon-layer-3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+
+        <!-- Zipper track — horizontal bar across top opening -->
+        <rect x="290" y="304" width="444" height="9" rx="4" ry="4"
+              fill="url(#zipperTrack)" opacity="0.9"/>
+
+        <!-- Zipper teeth — left side of pull -->
+        <g fill="#F5A623" opacity="0.95">
+            <rect x="298" y="296" width="8" height="14" rx="2"/>
+            <rect x="314" y="296" width="8" height="14" rx="2"/>
+            <rect x="330" y="296" width="8" height="14" rx="2"/>
+            <rect x="346" y="296" width="8" height="14" rx="2"/>
+            <rect x="362" y="296" width="8" height="14" rx="2"/>
+            <rect x="378" y="296" width="8" height="14" rx="2"/>
+            <rect x="394" y="296" width="8" height="14" rx="2"/>
+            <rect x="410" y="296" width="8" height="14" rx="2"/>
+            <rect x="426" y="296" width="8" height="14" rx="2"/>
+            <rect x="442" y="296" width="8" height="14" rx="2"/>
+        </g>
+
+        <!-- Zipper teeth — right side of pull -->
+        <g fill="#F5A623" opacity="0.95">
+            <rect x="570" y="296" width="8" height="14" rx="2"/>
+            <rect x="586" y="296" width="8" height="14" rx="2"/>
+            <rect x="602" y="296" width="8" height="14" rx="2"/>
+            <rect x="618" y="296" width="8" height="14" rx="2"/>
+            <rect x="634" y="296" width="8" height="14" rx="2"/>
+            <rect x="650" y="296" width="8" height="14" rx="2"/>
+            <rect x="666" y="296" width="8" height="14" rx="2"/>
+            <rect x="682" y="296" width="8" height="14" rx="2"/>
+            <rect x="698" y="296" width="8" height="14" rx="2"/>
+            <rect x="714" y="296" width="8" height="14" rx="2"/>
+        </g>
+
+        <!-- Zipper slider body (centred at ~512) -->
+        <rect x="455" y="286" width="114" height="28" rx="8" ry="8"
+              fill="#C8820A"/>
+        <rect x="462" y="291" width="100" height="18" rx="6" ry="6"
+              fill="url(#pullTab)"/>
+        <!-- Slider centre ridge -->
+        <rect x="505" y="291" width="14" height="18" rx="3" ry="3"
+              fill="#A06008" opacity="0.6"/>
+
+        <!-- Pull tab — hanging loop below slider -->
+        <path d="M504,314 L504,348 Q504,360 512,360 Q520,360 520,348 L520,314 Z"
+              fill="#C8820A"/>
+        <circle cx="512" cy="360" r="10" fill="none" stroke="#C8820A" stroke-width="5"/>
+        <circle cx="512" cy="360" r="4" fill="#F5A623"/>
+    </g>
+</svg>
