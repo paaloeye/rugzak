@@ -1,3 +1,13 @@
+//
+//  SPDX-License-Identifier: MIT
+//  Copyright (c) 2026 Paal Øye-Strømme
+//
+//  MountReconciler.swift
+//  Rugzak
+//
+//  Reads the kernel mount table to reconcile live FUSE mounts with app state.
+//
+
 import Darwin
 import Foundation
 

@@ -1,3 +1,13 @@
+//
+//  SPDX-License-Identifier: MIT
+//  Copyright (c) 2026 Paal Øye-Strømme
+//
+//  ArchiveManager.swift
+//  Rugzak
+//
+//  Observable service that owns the mount list and drives mount/unmount operations.
+//
+
 import AppKit
 import Combine
 import DiskArbitration

@@ -1,3 +1,13 @@
+//
+//  SPDX-License-Identifier: MIT
+//  Copyright (c) 2026 Paal Øye-Strømme
+//
+//  AboutView.swift
+//  Rugzak
+//
+//  About window showing app version, build number, and current git commit.
+//
+
 import SwiftUI
 
 struct AboutView: View {

@@ -1,8 +1,13 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
-# create_dmg.sh - Build and create DMG distribution
+#  SPDX-License-Identifier: MIT
+#  Copyright (c) 2026 Paal Øye-Strømme
 #
-# This script:
+#  create_dmg.sh
+#  Rukzak
+#
+# Build and create DMG distribution:
+#
 # 1. Builds in Release configuration
 # 2. Creates a distributable DMG with app and Applications folder link
 # 3. Optionally code signs and notarizes the DMG

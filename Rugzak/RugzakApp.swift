@@ -1,3 +1,13 @@
+//
+//  SPDX-License-Identifier: MIT
+//  Copyright (c) 2026 Paal Øye-Strømme
+//
+//  RugzakApp.swift
+//  Rugzak
+//
+//  App entry point; configures the main and About windows and the app delegate.
+//
+
 import SwiftUI
 
 @main

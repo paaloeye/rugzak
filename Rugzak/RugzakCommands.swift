@@ -1,3 +1,13 @@
+//
+//  SPDX-License-Identifier: MIT
+//  Copyright (c) 2026 Paal Øye-Strømme
+//
+//  RugzakCommands.swift
+//  Rugzak
+//
+//  Menu commands: replaces the default About item and adds the View › text-size menu.
+//
+
 import SwiftUI
 
 struct RugzakCommands: Commands {

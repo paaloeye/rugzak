@@ -1,3 +1,13 @@
+//
+//  SPDX-License-Identifier: MIT
+//  Copyright (c) 2026 Paal Øye-Strømme
+//
+//  UmountProcess.swift
+//  Rugzak
+//
+//  Invokes /sbin/umount to detach a FUSE mount point asynchronously.
+//
+
 import Foundation
 
 enum UmountError: LocalizedError {

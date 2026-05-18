@@ -1,3 +1,13 @@
+//
+//  SPDX-License-Identifier: MIT
+//  Copyright (c) 2026 Paal Øye-Strømme
+//
+//  ContentView.swift
+//  Rugzak
+//
+//  Main window: empty-state prompt, mounted-archive list, and error banner.
+//
+
 import SwiftUI
 import os.log
 

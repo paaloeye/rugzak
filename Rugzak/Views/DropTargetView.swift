@@ -1,3 +1,13 @@
+//
+//  SPDX-License-Identifier: MIT
+//  Copyright (c) 2026 Paal Øye-Strømme
+//
+//  DropTargetView.swift
+//  Rugzak
+//
+//  NSView-backed drag-and-drop target that accepts archive files and shows drop feedback.
+//
+
 import AppKit
 import SwiftUI
 import os.log

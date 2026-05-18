@@ -1,3 +1,13 @@
+//
+//  SPDX-License-Identifier: MIT
+//  Copyright (c) 2026 Paal Øye-Strømme
+//
+//  FuseProcess.swift
+//  Rugzak
+//
+//  Locates and invokes the fuse-archive binary to mount an archive at a given path.
+//
+
 import Foundation
 
 enum FuseError: LocalizedError {

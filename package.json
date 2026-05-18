@@ -4,6 +4,7 @@
   "description": "Rugzak",
   "keywords": [],
   "author": "Paal Øye-Strømme <paal.o.eye@gmail.com> (https://github.com/paaloeye)",
+  "license": "MIT",
   "scripts": {
     "fmt": "bun fmt:swift && bun fmt:docs",
     "fmt:swift": "xcrun swift-format format --in-place",

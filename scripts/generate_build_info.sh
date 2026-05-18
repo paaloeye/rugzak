@@ -6,7 +6,7 @@
 #  generate_build_info.sh
 #  Rukzak
 #
-#  Generates a build configuration file with Git metadata.
+#  Generates a build configuration file with Git metadata
 #
 
 set -euo pipefail

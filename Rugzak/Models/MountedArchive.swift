@@ -1,3 +1,13 @@
+//
+//  SPDX-License-Identifier: MIT
+//  Copyright (c) 2026 Paal Øye-Strømme
+//
+//  MountedArchive.swift
+//  Rugzak
+//
+//  Value type representing a single archive currently mounted via fuse-archive.
+//
+
 import Foundation
 
 /// A single archive currently mounted via fuse-archive.

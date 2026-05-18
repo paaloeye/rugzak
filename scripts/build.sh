@@ -1,6 +1,12 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
-# build.sh - Build Rugzak without installing in Release configuration for testing and development.
+#  SPDX-License-Identifier: MIT
+#  Copyright (c) 2026 Paal Øye-Strømme
+#
+#  create_dmg.sh
+#  Rukzak
+#
+# Build Rugzak without installing in Release configuration for testing and development
 #
 
 set -euo pipefail
