@@ -35,7 +35,7 @@ jobs:
         run: ls -la /Applications/Xcode*
 
       - name: Xcode Select
-        run: sudo xcode-select -s /Applications/Xcode_26.2.app
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app
 
       - name: Xcode Select
         run: xcode-select -p
