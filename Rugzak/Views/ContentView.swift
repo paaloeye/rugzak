@@ -79,7 +79,7 @@ struct ContentView: View {
             Text("Drop an archive here or on the Dock icon")
                 .font(.title3)
                 .foregroundStyle(.secondary)
-            Text("Supported: zip, tar, tar.gz, tar.bz2, tar.xz")
+            Text("Supported: zip, tar, tar.gz, tar.bz2, tar.xz, ipsw, xip")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
         }

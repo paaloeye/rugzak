@@ -43,9 +43,9 @@ final class ArchiveManager: ObservableObject {
         // archive containers
         "7z", "7zip", "a", "ar", "cab", "cpio", "deb", "iso", "iso9660",
         "jar", "lha", "lzh", "mtree", "rar", "rpm", "tar", "war", "warc", "xar",
-        "zip", "zipx",
+        "xip", "zip", "zipx",
         // zip-based formats
-        "aab", "apk", "cbz", "crx", "docx", "epub", "ipa", "odf", "odg",
+        "aab", "apk", "cbz", "crx", "docx", "epub", "ipa", "ipsw", "odf", "odg",
         "odp", "ods", "odt", "ppsx", "pptx", "whl", "xlsx", "xpi",
         // rar-based
         "cbr",
