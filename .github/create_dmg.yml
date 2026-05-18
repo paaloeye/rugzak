@@ -1,0 +1,94 @@
+name: "📦 Create DMG"
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build-dmg:
+    name: Build and Create DMG
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # - name: Cache Swift Package Manager
+      #   uses: actions/cache@v5
+      #   with:
+      #       path: |
+      #           .tmp/DerivedData/**/SourcePackages
+      #       key: ${{ runner.os }}-spm-${{ hashFiles('Zippo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+      #       restore-keys: |
+      #           ${{ runner.os }}-spm-
+
+      - name: Xcode Select
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app
+
+      - name: Xcode Select
+        run: xcode-select -p
+
+      - name: XcodeBuild Version
+        run: xcodebuild -version
+
+      - name: Set build
+        run: agvtool new-version ${{ github.run_number }}
+
+      - name: Create DMG
+        run: ./scripts/create_dmg.sh --verbose
+
+      - name: Get DMG info
+        id: dmg_info
+        run: |
+          DMG_FILE=$(find .dist -name "*.dmg" -type f | head -n 1)
+          DMG_NAME=$(basename "${DMG_FILE}")
+          DMG_SIZE=$(du -sh "${DMG_FILE}" | cut -f1)
+          DMG_SHA256=$(shasum -a 256 "${DMG_FILE}" | cut -d' ' -f1)
+
+          echo "dmg_file=${DMG_FILE}" >> $GITHUB_OUTPUT
+          echo "dmg_name=${DMG_NAME}" >> $GITHUB_OUTPUT
+          echo "dmg_size=${DMG_SIZE}" >> $GITHUB_OUTPUT
+          echo "dmg_sha256=${DMG_SHA256}" >> $GITHUB_OUTPUT
+
+          echo "### DMG Build Complete 🎉" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**File**: \`${DMG_NAME}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Size**: ${DMG_SIZE}" >> $GITHUB_STEP_SUMMARY
+          echo "**SHA256**: \`${DMG_SHA256}\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: flight-engineer-dmg
+          path: .dist/*.dmg
+          retention-days: 30
+          if-no-files-found: error
+          include-hidden-files: true
+
+      # - name: Create Release
+      #   if: startsWith(github.ref, 'refs/tags/v')
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     files: .dist/*.dmg
+      #     body: |
+      #       ## Zippo ${{ github.ref_name }}
+
+      #       ### Installation
+      #       1. Download the DMG file below
+      #       2. Open the DMG
+      #       3. Drag Zippo to Applications
+
+      #       ### Build Information
+      #       - **Size**: ${{ steps.dmg_info.outputs.dmg_size }}
+      #       - **SHA256**: `${{ steps.dmg_info.outputs.dmg_sha256 }}`
+
+      #     draft: false
+      #     prerelease: false
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

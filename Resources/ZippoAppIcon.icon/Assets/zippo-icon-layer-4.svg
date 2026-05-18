@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Layer 4: Buckle, side stitching, and structural seam details -->
+<svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1"
+     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>zippo-icon-layer-4</title>
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="0%" y2="100%" id="buckleGrad">
+            <stop stop-color="#FFD060" offset="0%"/>
+            <stop stop-color="#C8820A" offset="100%"/>
+        </linearGradient>
+    </defs>
+    <g id="zippo-icon-layer-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+
+        <!-- Left vertical side seam / stitching -->
+        <line x1="316" y1="295" x2="316" y2="815"
+              stroke="#3D5A99" stroke-width="2" stroke-dasharray="10,7" opacity="0.5"/>
+        <!-- Right vertical side seam -->
+        <line x1="708" y1="295" x2="708" y2="815"
+              stroke="#3D5A99" stroke-width="2" stroke-dasharray="10,7" opacity="0.5"/>
+
+        <!-- Horizontal middle body seam -->
+        <line x1="290" y1="550" x2="734" y2="550"
+              stroke="#3D5A99" stroke-width="2" stroke-dasharray="8,8" opacity="0.35"/>
+
+        <!-- Chest strap / buckle (horizontal band across mid body) -->
+        <rect x="280" y="480" width="50" height="28" rx="6" ry="6"
+              fill="#1A2744" opacity="0.8"/>
+        <rect x="694" y="480" width="50" height="28" rx="6" ry="6"
+              fill="#1A2744" opacity="0.8"/>
+        <!-- Strap connecting both sides -->
+        <rect x="330" y="487" width="364" height="14" rx="4" ry="4"
+              fill="#253660" opacity="0.7"/>
+
+        <!-- Buckle left -->
+        <rect x="274" y="474" width="62" height="40" rx="8" ry="8"
+              fill="none" stroke="url(#buckleGrad)" stroke-width="5"/>
+        <rect x="286" y="482" width="16" height="24" rx="3" ry="3"
+              fill="url(#buckleGrad)" opacity="0.8"/>
+
+        <!-- Buckle right -->
+        <rect x="688" y="474" width="62" height="40" rx="8" ry="8"
+              fill="none" stroke="url(#buckleGrad)" stroke-width="5"/>
+        <rect x="722" y="482" width="16" height="24" rx="3" ry="3"
+              fill="url(#buckleGrad)" opacity="0.8"/>
+
+        <!-- Bottom reinforcement band -->
+        <rect x="280" y="800" width="464" height="18" rx="0" ry="0"
+              fill="#1A2744" opacity="0.5"/>
+        <line x1="280" y1="800" x2="744" y2="800"
+              stroke="#3D5A99" stroke-width="2" opacity="0.4"/>
+    </g>
+</svg>

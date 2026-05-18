@@ -1,0 +1,48 @@
+name: "👷‍♀️ Build"
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: "Build"
+    timeout-minutes: 10
+    runs-on: macos-latest
+
+    strategy:
+      fail-fast: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      # when and if we have external dependencies
+      # - name: Cache Swift Package Manager
+      #   uses: actions/cache@v5
+      #   with:
+      #       path: |
+      #           .tmp/DerivedData/**/SourcePackages
+      #       key: ${{ runner.os }}-spm-${{ hashFiles('Zippo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+      #       restore-keys: |
+      #           ${{ runner.os }}-spm-
+
+      - name: Xcode Versions
+        run: ls -la /Applications/Xcode*
+
+      - name: Xcode Select
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app
+
+      - name: Xcode Select
+        run: xcode-select -p
+
+      - name: XcodeBuild Version
+        run: xcodebuild -version
+
+      - name: Set build
+        run: agvtool new-version ${{ github.run_number }}
+
+      - name: Build
+        run: ./scripts/build.sh --debug
