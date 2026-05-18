@@ -168,29 +168,54 @@ final class ArchiveManager: ObservableObject {
 
     // MARK: - Preview
     // only needed for preview in Xcode
+    #if DEBUG
+        private init(preview _: ()) {}
 
-    private init(preview _: ()) {}
+        static func preview(mounts: [MountedArchive] = [], error: String? = nil) -> ArchiveManager {
+            let m = ArchiveManager(preview: ())
+            m.mounts = mounts
+            m.errorMessage = error
+            return m
+        }
 
-    static func preview(mounts: [MountedArchive] = [], error: String? = nil) -> ArchiveManager {
-        let m = ArchiveManager(preview: ())
-        m.mounts = mounts
-        m.errorMessage = error
-        return m
-    }
-
-    static func previewWithMounts() -> ArchiveManager {
-        preview(mounts: [
-            MountedArchive(
-                id: UUID(),
-                archivePath: URL(fileURLWithPath: "/Downloads/project.zip"),
-                mountPoint: URL(fileURLWithPath: "/Mounts/project")
-            ),
-            MountedArchive(
-                id: UUID(),
-                archivePath: URL(fileURLWithPath: "/Downloads/backup.tar.gz"),
-                mountPoint: URL(fileURLWithPath: "/Mounts/backup")
-            ),
-        ])
-    }
-
+        static func previewWithMounts() -> ArchiveManager {
+            preview(mounts: [
+                MountedArchive(
+                    id: UUID(),
+                    archivePath: URL(fileURLWithPath: "/Downloads/homebrew-core-20260518.tar.gz"),
+                    mountPoint: URL(fileURLWithPath: "/Mounts/homebrew-core-20260518")
+                ),
+                MountedArchive(
+                    id: UUID(),
+                    archivePath: URL(fileURLWithPath: "/Archives/swift-6.1-RELEASE.tar.gz"),
+                    mountPoint: URL(fileURLWithPath: "/Mounts/swift-6.1-RELEASE")
+                ),
+                MountedArchive(
+                    id: UUID(),
+                    archivePath: URL(fileURLWithPath: "/Downloads/Xcode_16.3.xip"),
+                    mountPoint: URL(fileURLWithPath: "/Mounts/Xcode_16.3")
+                ),
+                MountedArchive(
+                    id: UUID(),
+                    archivePath: URL(fileURLWithPath: "/Downloads/linux-6.9.tar.xz"),
+                    mountPoint: URL(fileURLWithPath: "/Mounts/linux-6.9")
+                ),
+                MountedArchive(
+                    id: UUID(),
+                    archivePath: URL(fileURLWithPath: "/tmp/macOS-Sequoia-15.5.ipsw"),
+                    mountPoint: URL(fileURLWithPath: "/Mounts/macOS-Sequoia-15.5")
+                ),
+                MountedArchive(
+                    id: UUID(),
+                    archivePath: URL(fileURLWithPath: "/Downloads/helix-25.01-x86_64-macos.tar.xz"),
+                    mountPoint: URL(fileURLWithPath: "/Mounts/helix-25.01-x86_64-macos")
+                ),
+                MountedArchive(
+                    id: UUID(),
+                    archivePath: URL(fileURLWithPath: "/Downloads/dotfiles-backup-2026.tar.bz2"),
+                    mountPoint: URL(fileURLWithPath: "/Mounts/dotfiles-backup-2026")
+                ),
+            ])
+        }
+    #endif
 }

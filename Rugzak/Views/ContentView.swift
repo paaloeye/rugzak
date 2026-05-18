@@ -185,13 +185,14 @@ private struct MountRow: View {
     }
 }
 
+// MARK: - Preview
+
 #Preview("Empty state") {
     ContentView()
         .environmentObject(ArchiveManager.preview())
 }
 
 #Preview("With mounts") {
-    // raise(SIGSTOP) // pauses process — attach LLDB before crash
     ContentView()
         .environmentObject(ArchiveManager.previewWithMounts())
 }
@@ -217,4 +218,18 @@ private struct MountRow: View {
 #Preview("Drop targeted — already mounted") {
     ContentView(dropState: .alreadyMounted)
         .environmentObject(ArchiveManager.previewWithMounts())
+}
+
+// MARK - README
+
+#Preview("Rugzak") {
+    ContentView()
+        .environmentObject(ArchiveManager.previewWithMounts())
+        .preferredColorScheme(.light)
+}
+
+#Preview("Rugzak") {
+    ContentView()
+        .environmentObject(ArchiveManager.previewWithMounts())
+        .preferredColorScheme(.dark)
 }

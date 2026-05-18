@@ -24,6 +24,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
   - `XcodeWrite` can be used for creating new files only, so they are tracked by Xcode
 - ALWAYS make sure `BuildProject` is _green_ and `XcodeRefreshCodeIssuesInFile` is at least _yellow_ before reporting _ready_
 - USE `RenderPreview` to render actual state and test your assumptions when working with UI and UX elements
+- ALWAYS re-render and update `docs/screenshots/screenshot_light.png` and `docs/screenshots/screenshot_dark.png`
+  when either the README `#Preview("Rugzak")` macros in `ContentView.swift` or
+  `ArchiveManager.previewWithMounts()` are changed — use `RenderPreview`
 
 ## A Tour of Banners
 

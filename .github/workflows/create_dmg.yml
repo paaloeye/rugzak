@@ -74,24 +74,24 @@ jobs:
           if-no-files-found: error
           include-hidden-files: true
 
-      # - name: Create Release
-      #   if: startsWith(github.ref, 'refs/tags/v')
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     files: .dist/*.dmg
-      #     body: |
-      #       ## Rugzak ${{ github.ref_name }}
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: .dist/*.dmg
+          body: |
+            ## Rugzak ${{ github.ref_name }}
 
-      #       ### Installation
-      #       1. Download the DMG file below
-      #       2. Open the DMG
-      #       3. Drag Rugzak to Applications
+            ### Installation
+            1. Download the DMG file below
+            2. Open the DMG
+            3. Drag Rugzak to Applications
 
-      #       ### Build Information
-      #       - **Size**: ${{ steps.dmg_info.outputs.dmg_size }}
-      #       - **SHA256**: `${{ steps.dmg_info.outputs.dmg_sha256 }}`
+            ### Build Information
+            - **Size**: ${{ steps.dmg_info.outputs.dmg_size }}
+            - **SHA256**: `${{ steps.dmg_info.outputs.dmg_sha256 }}`
 
-      #     draft: false
-      #     prerelease: false
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
