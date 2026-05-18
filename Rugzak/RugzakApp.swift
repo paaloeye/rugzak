@@ -13,6 +13,12 @@ struct RugzakApp: App {
         .commands {
             RugzakCommands()
         }
+
+        Window("About Rugzak", id: "about") {
+            AboutView()
+        }
+        .windowResizability(.contentSize)
+        .windowStyle(.hiddenTitleBar)
     }
 }
 

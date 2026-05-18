@@ -32,6 +32,13 @@ real crash site:
    Swift fatal errors print to `os_log` before the trap, so the exact file/line appears here
    (e.g. `SwiftUI/TableViewListCore_Mac2.swift:<LINE_NUMBER>: Fatal error`).
 
+## Toolbar Background Not Visible in SwiftUI Previews
+
+`.toolbarBackground(_:for:)` and `.toolbarBackground(.visible, for:)` do not render in Xcode SwiftUI
+previews on macOS — the toolbar chrome remains the default system colour regardless of what colour
+is set. The modifier works correctly at runtime in the actual app. Do **not** treat a missing toolbar
+colour in a preview as a bug or attempt to work around it with AppKit hacks.
+
 ## List crashes in SwiftUI Previews
 
 `List` on macOS is backed by `NSTableView` (`TableViewListCore_Mac2`). This crashes in the Xcode

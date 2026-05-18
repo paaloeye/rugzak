@@ -17,6 +17,7 @@ private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: 
 @MainActor
 struct ContentView: View {
     @EnvironmentObject var manager: ArchiveManager
+    @Environment(\.openWindow) private var openWindow
     @State private var dropState: DropState
     @AppStorage("rowFontSize") private var fontSize: Double = RowFontSizeKey.defaultValue
 
@@ -44,6 +45,20 @@ struct ContentView: View {
         }
         .frame(minWidth: 480, minHeight: 320)
         .environment(\.rowFontSize, fontSize)
+        .toolbar {
+            ToolbarItem(placement: .automatic) {
+                Button {
+                    openWindow(id: "about")
+                } label: {
+                    Image(systemName: "info.circle")
+                }
+                .foregroundStyle(Color.brandText)
+                .help("About Rugzak")
+            }
+        }
+        .toolbarBackground(Color.brandBackground, for: .windowToolbar)
+        .toolbarBackground(.visible, for: .windowToolbar)
+        .background(Color.brandBackground)
     }
 
     private var emptyState: some View {
