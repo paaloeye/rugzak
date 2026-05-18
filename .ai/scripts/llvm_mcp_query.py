@@ -2,7 +2,7 @@
 """
 Query LLDB MCP server for debugger resources and current debugger ID.
 
-This script connects to the LLDB MCP server running on localhost:59998
+This script connects to the LLDB MCP server running on localhost:59995
 and retrieves information about active debuggers and targets.
 
 Usage:
@@ -14,14 +14,14 @@ import json
 import sys
 
 
-def query_lldb_mcp(request, host='localhost', port=59998, timeout=2):
+def query_lldb_mcp(request, host='localhost', port=59995, timeout=2):
     """
     Send a JSON-RPC request to the LLDB MCP server and return the response.
 
     Args:
         request: Dictionary containing the JSON-RPC request
         host: Server hostname (default: localhost)
-        port: Server port (default: 59998)
+        port: Server port (default: 59995)
         timeout: Socket timeout in seconds (default: 2)
 
     Returns:

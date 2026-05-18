@@ -27,6 +27,17 @@ macOS Dock app which bridges [google/fuse-archive](https://github.com/google/fus
 
 - [x] custom icon
 
+## Getting Started
+
+After cloning, bootstrap the build configuration:
+
+```bash
+bash scripts/generate_build_info.sh
+```
+
+This generates `Config/GeneratedBuildInfo.xcconfig` (Git commit hash and build status) required
+before the first Xcode build. Subsequent builds run the script automatically.
+
 ## Prerequisites
 
 ```bash

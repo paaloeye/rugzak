@@ -37,3 +37,5 @@ xcuserdata/
 /node_modules
 .tmp
 default.profraw
+/Config
+
