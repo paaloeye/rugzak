@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8A0380C02FB70F2600814CD3"
-               BuildableName = "Zippo.app"
-               BlueprintName = "Zippo"
-               ReferencedContainer = "container:Zippo.xcodeproj">
+               BuildableName = "Rugzak.app"
+               BlueprintName = "Rugzak"
+               ReferencedContainer = "container:Rugzak.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -47,9 +47,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8A0380C02FB70F2600814CD3"
-            BuildableName = "Zippo.app"
-            BlueprintName = "Zippo"
-            ReferencedContainer = "container:Zippo.xcodeproj">
+            BuildableName = "Rugzak.app"
+            BlueprintName = "Rugzak"
+            ReferencedContainer = "container:Rugzak.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -64,9 +64,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8A0380C02FB70F2600814CD3"
-            BuildableName = "Zippo.app"
-            BlueprintName = "Zippo"
-            ReferencedContainer = "container:Zippo.xcodeproj">
+            BuildableName = "Rugzak.app"
+            BlueprintName = "Rugzak"
+            ReferencedContainer = "container:Rugzak.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

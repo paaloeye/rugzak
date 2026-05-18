@@ -1,4 +1,4 @@
-# Zippo
+# Rugzak
 
 macOS Dock app which bridges [google/fuse-archive](https://github.com/google/fuse-archive) and **macOS**.
 
@@ -19,18 +19,18 @@ macOS Dock app which bridges [google/fuse-archive](https://github.com/google/fus
 - [x] `DiskArbitration` for event-driven notification on mounted / umounted archives
 - bugs:
   - [x] there should be only one window (singleton architecture)
-  - [x] _fuse-mounted_ archives outside of Zippo should be enumerated
+  - [x] _fuse-mounted_ archives outside of Rugzak should be enumerated
 - **version 0.2**
 - [ ] support encrypted archives (full UI)
 
 ## Quality of life
 
-- [ ] custom icon
+- [x] custom icon
 
 ## Prerequisites
 
 ```bash
-brew install macfuse fuse-archive macfuse
+brew install fuse-archive macfuse
 ```
 
 Mounts appear under `~/Mounts/<archive-name>/`.

@@ -24,7 +24,7 @@ jobs:
       #   with:
       #       path: |
       #           .tmp/DerivedData/**/SourcePackages
-      #       key: ${{ runner.os }}-spm-${{ hashFiles('Zippo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+      #       key: ${{ runner.os }}-spm-${{ hashFiles('Rugzak.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
       #       restore-keys: |
       #           ${{ runner.os }}-spm-
 
@@ -77,12 +77,12 @@ jobs:
       #   with:
       #     files: .dist/*.dmg
       #     body: |
-      #       ## Zippo ${{ github.ref_name }}
+      #       ## Rugzak ${{ github.ref_name }}
 
       #       ### Installation
       #       1. Download the DMG file below
       #       2. Open the DMG
-      #       3. Drag Zippo to Applications
+      #       3. Drag Rugzak to Applications
 
       #       ### Build Information
       #       - **Size**: ${{ steps.dmg_info.outputs.dmg_size }}

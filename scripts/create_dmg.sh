@@ -19,16 +19,16 @@ NC='\033[0m' # No Colour
 
 # Configuration
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-XCODE_PROJECT="${PROJECT_ROOT}/Zippo.xcodeproj"
+XCODE_PROJECT="${PROJECT_ROOT}/Rugzak.xcodeproj"
 BUILD_CONFIG="Release"
 DERIVED_DATA="${PROJECT_ROOT}/.tmp/DerivedData"
 DIST_DIR="${PROJECT_ROOT}/.tmp/dist"
 DMG_DIR="${PROJECT_ROOT}/.dist"
 
 # Get version from Info.plist (will be built first, so we check after build)
-APP_NAME="Zippo"           # Xcode scheme/target name
-APP_DISPLAY_NAME="Zippo"   # Human-readable display name
-DMG_NAME="Zippo"  # DMG file prefix
+APP_NAME="Rugzak"           # Xcode scheme/target name
+APP_DISPLAY_NAME="Rugzak"   # Human-readable display name
+DMG_NAME="Rugzak"  # DMG file prefix
 
 # Parse arguments
 CLEAN=false
@@ -91,7 +91,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 echo "=================================================="
-echo "  Zippo DMG Creator"
+echo "  Rugzak DMG Creator"
 echo "=================================================="
 echo ""
 

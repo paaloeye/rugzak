@@ -2,7 +2,7 @@
 <!-- Layer 3: Main zipper — amber gold teeth and pull tab along the top arc -->
 <svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1"
      xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>zippo-icon-layer-3</title>
+    <title>rugzak-icon-layer-3</title>
     <defs>
         <linearGradient x1="0%" y1="50%" x2="100%" y2="50%" id="zipperTrack">
             <stop stop-color="#C8820A" offset="0%"/>
@@ -14,7 +14,7 @@
             <stop stop-color="#C8820A" offset="100%"/>
         </linearGradient>
     </defs>
-    <g id="zippo-icon-layer-3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="rugzak-icon-layer-3" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
 
         <!-- Zipper track — horizontal bar across top opening -->
         <rect x="290" y="304" width="444" height="9" rx="4" ry="4"

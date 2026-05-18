@@ -8,33 +8,33 @@
 
 /* Begin PBXBuildFile section */
 		8A0643882FBB57220021C932 /* colours.md in Resources */ = {isa = PBXBuildFile; fileRef = 8A0643852FBB57220021C932 /* colours.md */; };
-		8A0643892FBB57220021C932 /* ZippoAppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 8A0643862FBB57220021C932 /* ZippoAppIcon.icon */; };
+		8A0643892FBB57220021C932 /* RugzakAppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 8A0643862FBB57220021C932 /* RugzakAppIcon.icon */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8A0380C12FB70F2600814CD3 /* Zippo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zippo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A0380C12FB70F2600814CD3 /* Rugzak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rugzak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A0380D32FB7104600814CD3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		8A0643852FBB57220021C932 /* colours.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = colours.md; sourceTree = "<group>"; };
-		8A0643862FBB57220021C932 /* ZippoAppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = ZippoAppIcon.icon; sourceTree = "<group>"; };
+		8A0643862FBB57220021C932 /* RugzakAppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = RugzakAppIcon.icon; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		8A0380CD2FB70F2700814CD3 /* Exceptions for "Zippo" folder in "Zippo" target */ = {
+		8A0380CD2FB70F2700814CD3 /* Exceptions for "Rugzak" folder in "Rugzak" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 8A0380C02FB70F2600814CD3 /* Zippo */;
+			target = 8A0380C02FB70F2600814CD3 /* Rugzak */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		8A0380C32FB70F2600814CD3 /* Zippo */ = {
+		8A0380C32FB70F2600814CD3 /* Rugzak */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				8A0380CD2FB70F2700814CD3 /* Exceptions for "Zippo" folder in "Zippo" target */,
+				8A0380CD2FB70F2700814CD3 /* Exceptions for "Rugzak" folder in "Rugzak" target */,
 			);
-			path = Zippo;
+			path = Rugzak;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -54,7 +54,7 @@
 			isa = PBXGroup;
 			children = (
 				8A0380D32FB7104600814CD3 /* README.md */,
-				8A0380C32FB70F2600814CD3 /* Zippo */,
+				8A0380C32FB70F2600814CD3 /* Rugzak */,
 				8A0380C22FB70F2600814CD3 /* Products */,
 				8A0643872FBB57220021C932 /* Resources */,
 			);
@@ -63,7 +63,7 @@
 		8A0380C22FB70F2600814CD3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8A0380C12FB70F2600814CD3 /* Zippo.app */,
+				8A0380C12FB70F2600814CD3 /* Rugzak.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -72,7 +72,7 @@
 			isa = PBXGroup;
 			children = (
 				8A0643852FBB57220021C932 /* colours.md */,
-				8A0643862FBB57220021C932 /* ZippoAppIcon.icon */,
+				8A0643862FBB57220021C932 /* RugzakAppIcon.icon */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -80,9 +80,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8A0380C02FB70F2600814CD3 /* Zippo */ = {
+		8A0380C02FB70F2600814CD3 /* Rugzak */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8A0380CE2FB70F2700814CD3 /* Build configuration list for PBXNativeTarget "Zippo" */;
+			buildConfigurationList = 8A0380CE2FB70F2700814CD3 /* Build configuration list for PBXNativeTarget "Rugzak" */;
 			buildPhases = (
 				8A0380BD2FB70F2600814CD3 /* Sources */,
 				8A0380BE2FB70F2600814CD3 /* Frameworks */,
@@ -93,13 +93,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				8A0380C32FB70F2600814CD3 /* Zippo */,
+				8A0380C32FB70F2600814CD3 /* Rugzak */,
 			);
-			name = Zippo;
+			name = Rugzak;
 			packageProductDependencies = (
 			);
-			productName = Zippo;
-			productReference = 8A0380C12FB70F2600814CD3 /* Zippo.app */;
+			productName = Rugzak;
+			productReference = 8A0380C12FB70F2600814CD3 /* Rugzak.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -117,7 +117,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 8A0380BC2FB70F2600814CD3 /* Build configuration list for PBXProject "Zippo" */;
+			buildConfigurationList = 8A0380BC2FB70F2600814CD3 /* Build configuration list for PBXProject "Rugzak" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -131,7 +131,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8A0380C02FB70F2600814CD3 /* Zippo */,
+				8A0380C02FB70F2600814CD3 /* Rugzak */,
 			);
 		};
 /* End PBXProject section */
@@ -142,7 +142,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8A0643882FBB57220021C932 /* colours.md in Resources */,
-				8A0643892FBB57220021C932 /* ZippoAppIcon.icon in Resources */,
+				8A0643892FBB57220021C932 /* RugzakAppIcon.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,7 +162,7 @@
 		8A0380CF2FB70F2700814CD3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = ZippoAppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = RugzakAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -173,7 +173,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Zippo/Info.plist;
+				INFOPLIST_FILE = Rugzak/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -181,7 +181,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.paaloeye.zippo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.paaloeye.rugzak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -196,7 +196,7 @@
 		8A0380D02FB70F2700814CD3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = ZippoAppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = RugzakAppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -207,7 +207,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readwrite;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Zippo/Info.plist;
+				INFOPLIST_FILE = Rugzak/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -215,7 +215,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = com.paaloeye.zippo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.paaloeye.rugzak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -350,7 +350,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8A0380BC2FB70F2600814CD3 /* Build configuration list for PBXProject "Zippo" */ = {
+		8A0380BC2FB70F2600814CD3 /* Build configuration list for PBXProject "Rugzak" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8A0380D12FB70F2700814CD3 /* Debug */,
@@ -359,7 +359,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8A0380CE2FB70F2700814CD3 /* Build configuration list for PBXNativeTarget "Zippo" */ = {
+		8A0380CE2FB70F2700814CD3 /* Build configuration list for PBXNativeTarget "Rugzak" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8A0380CF2FB70F2700814CD3 /* Debug */,

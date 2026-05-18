@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# build.sh - Build Zippo installing in Release configuration for testing and development.
+# build.sh - Build Rugzak without installing in Release configuration for testing and development.
 #
 
 set -euo pipefail
@@ -55,7 +55,7 @@ done
 
 # Configuration
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-XCODE_PROJECT="${PROJECT_ROOT}/Zippo.xcodeproj"
+XCODE_PROJECT="${PROJECT_ROOT}/Rugzak.xcodeproj"
 BUILD_CONFIG="${BUILD_CONFIG:-Release}"
 DERIVED_DATA="${PROJECT_ROOT}/.tmp/DerivedData"
 
@@ -65,7 +65,7 @@ VERBOSE=false
 DEV_SIGN=false
 
 echo "=================================================="
-echo "  Zippo Build"
+echo "  Rugzak Build"
 echo "=================================================="
 echo ""
 echo "Configuration: ${BUILD_CONFIG}"
@@ -99,7 +99,7 @@ if [ "$DEV_SIGN" = true ]; then
     echo "  Code signing with: Apple Development"
     xcodebuild \
         -project "${XCODE_PROJECT}" \
-        -scheme "Zippo" \
+        -scheme "Rugzak" \
         -configuration "${BUILD_CONFIG}" \
         -derivedDataPath "${DERIVED_DATA}" \
         -arch arm64 -arch x86_64 \
@@ -110,7 +110,7 @@ if [ "$DEV_SIGN" = true ]; then
 else
     xcodebuild \
         -project "${XCODE_PROJECT}" \
-        -scheme "Zippo" \
+        -scheme "Rugzak" \
         -configuration "${BUILD_CONFIG}" \
         -derivedDataPath "${DERIVED_DATA}" \
         -arch arm64 -arch x86_64 \
@@ -128,12 +128,12 @@ if [ $BUILD_STATUS -ne 0 ]; then
     exit 1
 fi
 
-if [ ! -d "${DERIVED_DATA}/Build/Products/${BUILD_CONFIG}/Zippo.app" ]; then
-    echo -e "${RED}✗ Zippo not found in build products${NC}"
+if [ ! -d "${DERIVED_DATA}/Build/Products/${BUILD_CONFIG}/Rugzak.app" ]; then
+    echo -e "${RED}✗ Rugzak not found in build products${NC}"
     exit 1
 fi
 
-echo -e "${GREEN}✓ Zippo.app built successfully${NC}"
+echo -e "${GREEN}✓ Rugzak.app built successfully${NC}"
 echo ""
 
 # Show build products
@@ -145,15 +145,15 @@ echo -e "${BLUE}Build products location:${NC}"
 echo "  ${DERIVED_DATA}/Build/Products/${BUILD_CONFIG}/"
 echo ""
 echo -e "${BLUE}Built artifacts:${NC}"
-echo "  Zippo.app"
+echo "  Rugzak.app"
 echo ""
 
 # Show file sizes
-echo "  App:  $(du -sh "${DERIVED_DATA}/Build/Products/${BUILD_CONFIG}/Zippo.app" | cut -f1)"
+echo "  App:  $(du -sh "${DERIVED_DATA}/Build/Products/${BUILD_CONFIG}/Rugzak.app" | cut -f1)"
 echo ""
 
 # Show code signature information
-APP_PATH="${DERIVED_DATA}/Build/Products/${BUILD_CONFIG}/Zippo.app"
+APP_PATH="${DERIVED_DATA}/Build/Products/${BUILD_CONFIG}/Rugzak.app"
 SIGNATURE_INFO=$(codesign -dvvv "${APP_PATH}" 2>&1)
 
 if echo "${SIGNATURE_INFO}" | grep -q "Signature=adhoc"; then

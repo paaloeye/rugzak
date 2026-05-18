@@ -2,14 +2,14 @@
 <!-- Layer 4: Buckle, side stitching, and structural seam details -->
 <svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1"
      xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>zippo-icon-layer-4</title>
+    <title>rugzak-icon-layer-4</title>
     <defs>
         <linearGradient x1="0%" y1="0%" x2="0%" y2="100%" id="buckleGrad">
             <stop stop-color="#FFD060" offset="0%"/>
             <stop stop-color="#C8820A" offset="100%"/>
         </linearGradient>
     </defs>
-    <g id="zippo-icon-layer-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="rugzak-icon-layer-4" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
 
         <!-- Left vertical side seam / stitching -->
         <line x1="316" y1="295" x2="316" y2="815"

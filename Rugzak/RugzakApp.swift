@@ -1,17 +1,17 @@
 import SwiftUI
 
 @main
-struct ZippoApp: App {
+struct RugzakApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     var body: some Scene {
-        Window("Zippo", id: "main") {
+        Window("Rugzak", id: "main") {
             ContentView()
                 .environmentObject(ArchiveManager.shared)
         }
         .windowResizability(.contentSize)
         .commands {
-            ZippoCommands()
+            RugzakCommands()
         }
     }
 }

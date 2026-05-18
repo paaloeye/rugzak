@@ -7,8 +7,8 @@
       "layers" : [
         {
           "hidden" : false,
-          "image-name" : "zippo-icon-layer-4.svg",
-          "name" : "zippo-icon-layer-4",
+          "image-name" : "rugzak-icon-layer-4.svg",
+          "name" : "rugzak-icon-layer-4",
           "position" : {
             "scale" : 1,
             "translation-in-points" : [
@@ -19,8 +19,8 @@
         },
         {
           "hidden" : false,
-          "image-name" : "zippo-icon-layer-3.svg",
-          "name" : "zippo-icon-layer-3",
+          "image-name" : "rugzak-icon-layer-3.svg",
+          "name" : "rugzak-icon-layer-3",
           "position" : {
             "scale" : 1,
             "translation-in-points" : [
@@ -31,8 +31,8 @@
         },
         {
           "hidden" : false,
-          "image-name" : "zippo-icon-layer-2.svg",
-          "name" : "zippo-icon-layer-2",
+          "image-name" : "rugzak-icon-layer-2.svg",
+          "name" : "rugzak-icon-layer-2",
           "position" : {
             "scale" : 0.88,
             "translation-in-points" : [
@@ -65,8 +65,8 @@
           "blend-mode" : "normal",
           "fill" : "automatic",
           "hidden" : false,
-          "image-name" : "zippo-icon-layer-1.svg",
-          "name" : "zippo-icon-layer-1",
+          "image-name" : "rugzak-icon-layer-1.svg",
+          "name" : "rugzak-icon-layer-1",
           "opacity" : 1,
           "position" : {
             "scale" : 1,

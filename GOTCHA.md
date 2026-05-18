@@ -10,7 +10,7 @@ This file provides guidance to Claude when it keeps making the same mistakes.
 ## Xcode File Synchronisation
 
 The project uses `PBXFileSystemSynchronizedRootGroup` (Xcode 16+). New `.swift` files dropped into
-`Zippo/` are picked up **automatically** — no need to add them to `project.pbxproj` manually.
+`Rugzak/` are picked up **automatically** — no need to add them to `project.pbxproj` manually.
 Use `XcodeWrite` (MCP) when creating new files so they are tracked on the Xcode side, but native
 filesystem writes (`Write` tool) are preferred for edits because they produce visible diffs.
 
@@ -27,7 +27,7 @@ real crash site:
 
 1. **Log stream** — run in a terminal _while_ triggering the preview:
    ```
-   log stream --predicate 'process == "Zippo"' --debug --info --style compact
+   log stream --predicate 'process == "Rugzak"' --debug --info --style compact
    ```
    Swift fatal errors print to `os_log` before the trap, so the exact file/line appears here
    (e.g. `SwiftUI/TableViewListCore_Mac2.swift:<LINE_NUMBER>: Fatal error`).

@@ -2,7 +2,7 @@
 <!-- Layer 1: Backpack body — main shape (steel navy) -->
 <svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1"
      xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>zippo-icon-layer-1</title>
+    <title>rugzak-icon-layer-1</title>
     <defs>
         <!-- Body gradient: top highlight → deep navy -->
         <linearGradient x1="30%" y1="0%" x2="70%" y2="100%" id="bodyGradient">
@@ -20,7 +20,7 @@
             <rect x="0" y="0" width="1024" height="1024" rx="230" ry="230"/>
         </clipPath>
     </defs>
-    <g id="zippo-icon-layer-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" clip-path="url(#iconClip)">
+    <g id="rugzak-icon-layer-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" clip-path="url(#iconClip)">
         <!-- Background fill -->
         <!-- <rect x="0" y="0" width="1024" height="1024" fill="url(#bodyGradient)"/> -->
 

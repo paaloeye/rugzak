@@ -2,14 +2,14 @@
 <!-- Layer 2: Front pocket — darker accent panel with stitched border -->
 <svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1"
      xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <title>zippo-icon-layer-2</title>
+    <title>rugzak-icon-layer-2</title>
     <defs>
         <linearGradient x1="20%" y1="0%" x2="80%" y2="100%" id="pocketGradient">
             <stop stop-color="#253660" offset="0%"/>
             <stop stop-color="#1A2744" offset="100%"/>
         </linearGradient>
     </defs>
-    <g id="zippo-icon-layer-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="rugzak-icon-layer-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
 
         <!-- Front pocket body -->
         <rect x="330" y="560" width="364" height="240" rx="36" ry="36"

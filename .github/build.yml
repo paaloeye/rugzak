@@ -25,7 +25,7 @@ jobs:
       #   with:
       #       path: |
       #           .tmp/DerivedData/**/SourcePackages
-      #       key: ${{ runner.os }}-spm-${{ hashFiles('Zippo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
+      #       key: ${{ runner.os }}-spm-${{ hashFiles('Rugzak.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
       #       restore-keys: |
       #           ${{ runner.os }}-spm-
 
