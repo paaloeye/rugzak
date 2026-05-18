@@ -10,6 +10,9 @@ struct ZippoApp: App {
                 .environmentObject(ArchiveManager.shared)
         }
         .windowResizability(.contentSize)
+        .commands {
+            FontSizeCommands()
+        }
     }
 }
 

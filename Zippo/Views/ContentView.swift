@@ -1,12 +1,24 @@
 import SwiftUI
 import os.log
 
+struct RowFontSizeKey: EnvironmentKey {
+    static let defaultValue: Double = 14
+}
+
+extension EnvironmentValues {
+    var rowFontSize: Double {
+        get { self[RowFontSizeKey.self] }
+        set { self[RowFontSizeKey.self] = newValue }
+    }
+}
+
 private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ContentView")
 
 @MainActor
 struct ContentView: View {
     @EnvironmentObject var manager: ArchiveManager
     @State private var dropState: DropState
+    @AppStorage("rowFontSize") private var fontSize: Double = RowFontSizeKey.defaultValue
 
     init(dropState: DropState = .idle) {
         _dropState = State(initialValue: dropState)
@@ -31,6 +43,7 @@ struct ContentView: View {
             .opacity(dropState == .idle ? 1 : 0)
         }
         .frame(minWidth: 480, minHeight: 320)
+        .environment(\.rowFontSize, fontSize)
     }
 
     private var emptyState: some View {
@@ -83,19 +96,21 @@ struct ContentView: View {
 private struct MountRow: View {
     let archive: MountedArchive
     @EnvironmentObject var manager: ArchiveManager
+    @Environment(\.rowFontSize) private var fontSize
     @State private var showingUnmountConfirm = false
 
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: "externaldrive.badge.checkmark")
                 .foregroundStyle(.green)
+                .font(.system(size: fontSize))
                 .frame(width: 24)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(archive.displayName)
-                    .font(.body)
+                    .font(.system(size: fontSize))
                 Text(archive.mountPoint.path)
-                    .font(.caption)
+                    .font(.system(size: fontSize - 2))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
                     .truncationMode(.middle)
@@ -104,7 +119,7 @@ private struct MountRow: View {
             Spacer()
 
             Text(archive.mountedAt.formatted(.relative(presentation: .numeric)))
-                .font(.caption)
+                .font(.system(size: fontSize - 2))
                 .foregroundStyle(.tertiary)
 
             Button {
