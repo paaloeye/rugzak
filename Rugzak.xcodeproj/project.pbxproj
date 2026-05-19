@@ -184,8 +184,13 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/scripts/vendor_build.sh",
+				"$(SRCROOT)/scripts/vendor_init.sh",
 				"$(SRCROOT)/vendor/fuse-archive/fuse-archive.cc",
 				"$(SRCROOT)/vendor/libarchive/libarchive/archive.h",
+				"$(SRCROOT)/vendor/xz/src/liblzma/api/lzma.h",
+				"$(SRCROOT)/vendor/libb2/src/blake2.h",
+				"$(SRCROOT)/vendor/zstd/lib/zstd.h",
+				"$(SRCROOT)/vendor/lz4/lib/lz4.h",
 			);
 			name = "Build fuse-archive";
 			outputFileListPaths = (

@@ -14,6 +14,10 @@
 
 set -euo pipefail
 
+# Xcode run-script phases inherit a minimal PATH — prepend Homebrew so that
+# cmake, pkg-config, and other build tools are found.
+export PATH="/opt/homebrew/bin:/usr/local/bin:${PATH}"
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 VENDOR_DIR="${ROOT_DIR}/vendor"
@@ -35,21 +39,22 @@ err() { echo -e "${RED}✗ $*${NC}" >&2; }
 # Skip if output is already fresh (Xcode input/output tracking also handles
 # this, but we check here for standalone runs too)
 # ---------------------------------------------------------------------------
-if [[ -f "${OUT_BINARY}" ]]; then
+if [[ -f "${OUT_BINARY}" ]] \
+    && [[ -d "${FUSE_SRC}" ]] \
+    && [[ -d "${LIBARCHIVE_SRC}" ]] \
+    && [[ -d "${XZ_SRC}" ]] \
+    && [[ -d "${LIBB2_SRC}" ]] \
+    && [[ -d "${ZSTD_SRC}" ]] \
+    && [[ -d "${LZ4_SRC}" ]]; then
     if ! find "${FUSE_SRC}" -name "*.cc" -newer "${OUT_BINARY}" | grep -q .; then
-        if ! find "${LIBARCHIVE_SRC}/libarchive" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
-            if ! find "${XZ_SRC}/src/liblzma" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
-                if ! find "${LIBB2_SRC}/src" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
-                    if ! find "${ZSTD_SRC}/lib" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
-                        if ! find "${LZ4_SRC}/lib" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
-                            ok "fuse-archive binary is up to date — skipping build"
-                            exit 0
-                        fi
-                    fi
-                fi
-            fi
-        fi
-    fi
+    if ! find "${LIBARCHIVE_SRC}/libarchive" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
+    if ! find "${XZ_SRC}/src/liblzma" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
+    if ! find "${LIBB2_SRC}/src" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
+    if ! find "${ZSTD_SRC}/lib" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
+    if ! find "${LZ4_SRC}/lib" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
+        ok "fuse-archive binary is up to date — skipping build"
+        exit 0
+    fi fi fi fi fi fi
 fi
 
 mkdir -p "${OUT_DIR}"
