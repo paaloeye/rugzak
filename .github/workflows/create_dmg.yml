@@ -37,8 +37,8 @@ jobs:
       - name: XcodeBuild Version
         run: xcodebuild -version
 
-      - name: Install macFUSE (build-time headers and pkg-config)
-        run: brew install --cask macfuse
+      - name: Install build dependencies (macFUSE headers, Boost)
+        run: brew install --cask macfuse && brew install boost
 
       - name: Checkout vendored dependencies
         run: ./scripts/vendor_init.sh

@@ -51,6 +51,11 @@ bash "${SCRIPT_DIR}/vendor_init.sh"
 # Prerequisites
 # ---------------------------------------------------------------------------
 command -v cmake &>/dev/null || { err "cmake not found"; exit 1; }
+# Boost is a header-only dep of fuse-archive — check via pkg-config or the canonical Homebrew path
+if ! pkg-config --exists boost 2>/dev/null && ! [[ -d /opt/homebrew/opt/boost/include || -d /usr/local/opt/boost/include ]]; then
+    err "Boost not found. Install with: brew install boost"
+    exit 1
+fi
 
 SYSROOT=$(xcrun --sdk macosx --show-sdk-path)
 NCPU=$(sysctl -n hw.ncpu)
