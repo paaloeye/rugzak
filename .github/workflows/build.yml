@@ -43,6 +43,12 @@ jobs:
       - name: XcodeBuild Version
         run: xcodebuild -version
 
+      - name: Checkout vendored dependencies
+        run: ./scripts/vendor_init.sh
+
+      - name: Build vendored dependencies
+        run: ./scripts/vendor_build.sh
+
       - name: Set build
         run: agvtool new-version ${{ github.run_number }}
 

@@ -19,10 +19,11 @@ Unmounting is one click away.
 
 ## Requirements
 
-| Dependency                                             | Install                       |
-| ------------------------------------------------------ | ----------------------------- |
-| [macFUSE](https://osxfuse.github.io)                   | `brew install --cask macfuse` |
-| [fuse-archive](https://github.com/google/fuse-archive) | `brew install fuse-archive`   |
+| Dependency                           | Install                       | Notes            |
+| ------------------------------------ | ----------------------------- | ---------------- |
+| [macFUSE](https://osxfuse.github.io) | `brew install --cask macfuse` | Kernel extension |
+
+`fuse-archive` is **bundled** inside the app — no separate install required.
 
 > [!IMPORTANT]
 > macFUSE requires a kernel extension. After installing, go to **System Settings → Privacy &
@@ -37,15 +38,20 @@ Unmounting is one click away.
 git clone https://github.com/paaloeye/rugzak.git
 cd rugzak
 
-# 2. Generate build metadata (required before the first Xcode build)
+# 2. Check out vendored dependencies (fuse-archive, libarchive)
+bash scripts/vendor_init.sh
+
+# 3. Bootstrap build metadata — required once so Xcode can open the project
 bash scripts/generate_build_info.sh
 
-# 3. Open in Xcode and run, or build from the command line
+# 4. Open in Xcode and run, or build from the command line
 bash scripts/build.sh
 ```
 
-`generate_build_info.sh` writes `Config/GeneratedBuildInfo.xcconfig` with the current Git commit
-hash. Subsequent builds run the script automatically via an Xcode build phase.
+`vendor_init.sh` clones `fuse-archive` and `libarchive` into `vendor/` at their pinned commits.
+`generate_build_info.sh` writes `Config/GeneratedBuildInfo.xcconfig`, which Xcode needs before
+the first build phase can run. Both scripts are idempotent; after the initial bootstrap all
+build phases run automatically inside Xcode on every subsequent build.
 
 ---
 
@@ -68,21 +74,24 @@ the list on launch and whenever macOS reports a disk event.
 
 ## Supported formats
 
-Rugzak passes the archive directly to `fuse-archive`, which supports:
+Rugzak passes the archive directly to the bundled `fuse-archive`.
+The bundled build links only macOS system libraries (zlib, bzip2, iconv) to keep the app
+self-contained. Formats requiring xz/lzma, zstd, lz4, or blake2 are not available in the bundled
+build; install `fuse-archive` via Homebrew and Rugzak will use it automatically as a fallback.
 
-**Containers** — `zip`, `zipx`, `tar`, `tar.gz`, `tar.bz2`, `tar.xz`, `tar.zst`, `7z`, `rar`,
-`cab`, `iso`, `deb`, `rpm`, `jar`, `war`, `xar`, `cpio`, `lha`, `lzh`, `ar`, `a`, `warc`,
-`mtree`
-
-**ZIP-based** — `docx`, `xlsx`, `pptx`, `odt`, `ods`, `odp`, `odg`, `odf`, `epub`, `apk`, `ipa`,
-`aab`, `whl`, `xpi`, `crx`, `cbz`
-
-**RAR-based** — `cbr`
-
-**Compression filters** — `gz`, `bz2`, `xz`, `zst`, `lz4`, `lzma`, `lzo`, `br`, `lrz`, `grz`,
-`z`
-
-**ASCII / encryption filters** — `base64`, `b64`, `uu`, `gpg`, `pgp`, `asc`
+| Format group                                                              | Bundled | With Homebrew `fuse-archive` |
+| ------------------------------------------------------------------------- | ------- | ---------------------------- |
+| `zip`, `zipx`, `jar`, `war`, `apk`, `ipa`, `epub`, `cbz`, …               | ✅      | ✅                           |
+| `tar`, `tar.gz`, `tar.bz2`, `cpio`, `ar`, `deb`, `rpm`                    | ✅      | ✅                           |
+| `tar.xz`, `tar.lzma`, `xip`, `xar`                                        | 🔲      | ✅                           |
+| `tar.zst`                                                                 | 🔲      | ✅                           |
+| `tar.lz4`                                                                 | 🔲      | ✅                           |
+| `7z`, `rar`, `cab`, `iso`, `lha`, `lzh`, `warc`, `mtree`                  | ✅      | ✅                           |
+| `cbr`                                                                     | ✅      | ✅                           |
+| RAR5 (blake2 checksums)                                                   | 🔲      | ✅                           |
+| Compression filters `gz`, `bz2`, `z`                                      | ✅      | ✅                           |
+| Compression filters `xz`, `zst`, `lz4`, `lzma`, `lzo`, `br`, `lrz`, `grz` | 🔲      | ✅                           |
+| ASCII / encryption filters `base64`, `b64`, `uu`, `gpg`, `pgp`, `asc`     | ✅      | ✅                           |
 
 > [!NOTE]
 > Encrypted archives (password-protected zip, gpg, …) are not supported in v0.1. Full UI for
@@ -124,12 +133,11 @@ Rugzak/
 
 - macFUSE mounts are **read-only**; you cannot write back into the archive.
 - Encrypted archives are **not yet supported** (v0.2 planned).
-- `fuse-archive` must be on PATH or in `/opt/homebrew/bin` / `/usr/local/bin`; bundled binary
-  support is planned for v0.2.
+- The bundled `fuse-archive` omits xz/lzma, zstd, lz4, and blake2 (RAR5 checksums). Install
+  `fuse-archive` via Homebrew for full format coverage.
 
 ---
 
 ## Licence
 
 MIT — see [LICENCE](./LICENCE).
-

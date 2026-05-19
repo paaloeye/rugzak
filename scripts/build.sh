@@ -46,7 +46,7 @@ while [[ $# -gt 0 ]]; do
             echo "Options:"
             echo "  --clean       Clean build (remove derived data)"
             echo "  --debug       Build Debug configuration (default: Release)"
-            echo "  --dev-sign    Sign with Apple Development certificate (preserves TCC permissions)"
+            echo "  --dev-sign    Sign with Apple Development certificate"
             echo "  --verbose,-v  Show detailed build output"
             echo "  --help,-h     Show this help message"
             exit 0
@@ -164,14 +164,11 @@ SIGNATURE_INFO=$(codesign -dvvv "${APP_PATH}" 2>&1)
 
 if echo "${SIGNATURE_INFO}" | grep -q "Signature=adhoc"; then
     echo -e "${YELLOW}Code Signature:${NC}"
-    echo "  Type: Ad-hoc (TCC permissions will NOT persist)"
-    echo "  Tip: Use --dev-sign to preserve permissions between builds"
 elif echo "${SIGNATURE_INFO}" | grep -q "Authority=Apple Development"; then
     TEAM_ID=$(echo "${SIGNATURE_INFO}" | grep "TeamIdentifier=" | cut -d'=' -f2)
     echo -e "${BLUE}Code Signature:${NC}"
     echo "  Type: Development"
     echo "  Team: ${TEAM_ID}"
-    echo -e "  ${GREEN}✓ TCC permissions will persist between builds${NC}"
 else
     echo -e "${BLUE}Code Signature:${NC}"
     echo "  $(echo "${SIGNATURE_INFO}" | grep "Authority=" | head -1 | cut -d'=' -f2)"

@@ -9,6 +9,9 @@
 //
 
 import Foundation
+import os.log
+
+private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FuseProcess")
 
 enum FuseError: LocalizedError {
     case binaryNotFound
@@ -25,15 +28,28 @@ enum FuseError: LocalizedError {
 }
 
 struct FuseProcess {
-    private static let knownPaths = [
+    private static let fallbackPaths = [
         "/opt/homebrew/bin/fuse-archive",
         "/usr/local/bin/fuse-archive",
     ]
 
     nonisolated static func binaryPath() throws -> String {
-        for path in knownPaths {
-            if FileManager.default.isExecutableFile(atPath: path) { return path }
+        // bundled fuse-archive
+        if let execDir = Bundle.main.executableURL?.deletingLastPathComponent() {
+            let bundled = execDir.appendingPathComponent("fuse-archive")
+            if FileManager.default.isExecutableFile(atPath: bundled.path) {
+                logger.debug("fuse-archive resolved: bundled at \(bundled.path, privacy: .public)")
+                return bundled.path
+            }
         }
+
+        for path in fallbackPaths {
+            if FileManager.default.isExecutableFile(atPath: path) {
+                logger.debug("fuse-archive resolved: fallback at \(path, privacy: .public)")
+                return path
+            }
+        }
+
         let which = Process()
         which.executableURL = URL(fileURLWithPath: "/usr/bin/which")
         which.arguments = ["fuse-archive"]
@@ -46,8 +62,13 @@ struct FuseProcess {
             let output = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8)
         {
             let path = output.trimmingCharacters(in: .whitespacesAndNewlines)
-            if !path.isEmpty { return path }
+            if !path.isEmpty {
+                logger.debug("fuse-archive resolved: PATH at \(path, privacy: .public)")
+                return path
+            }
         }
+
+        logger.error("fuse-archive binary not found")
         throw FuseError.binaryNotFound
     }
 
@@ -56,6 +77,9 @@ struct FuseProcess {
             DispatchQueue.global(qos: .userInitiated).async {
                 do {
                     let binary = try Self.binaryPath()
+                    logger.info(
+                        "spawning: \(binary, privacy: .public) \(archive.path, privacy: .public) \(mountPoint.path, privacy: .public)"
+                    )
                     let process = Process()
                     process.executableURL = URL(fileURLWithPath: binary)
                     process.arguments = [archive.path, mountPoint.path]
@@ -64,14 +88,20 @@ struct FuseProcess {
                     process.standardOutput = Pipe()
                     try process.run()
                     process.waitUntilExit()
-                    guard process.terminationStatus == 0 else {
+                    let exitCode = process.terminationStatus
+                    guard exitCode == 0 else {
                         let errData = errorPipe.fileHandleForReading.readDataToEndOfFile()
                         let errMsg = String(data: errData, encoding: .utf8) ?? ""
-                        continuation.resume(throwing: FuseError.mountFailed(process.terminationStatus, errMsg))
+                        logger.error(
+                            "fuse-archive exited \(exitCode): \(errMsg, privacy: .public)"
+                        )
+                        continuation.resume(throwing: FuseError.mountFailed(exitCode, errMsg))
                         return
                     }
+                    logger.info("fuse-archive mounted successfully at \(mountPoint.path, privacy: .public)")
                     continuation.resume()
                 } catch {
+                    logger.error("fuse-archive mount error: \(error, privacy: .public)")
                     continuation.resume(throwing: error)
                 }
             }

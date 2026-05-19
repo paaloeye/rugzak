@@ -74,7 +74,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Options:"
             echo "  --clean                    Clean build (remove derived data)"
-            echo "  --dev-sign                 Sign with Apple Development (preserves TCC permissions)"
+            echo "  --dev-sign                 Sign with Apple Development"
             echo "  --sign IDENTITY            Code sign with specified identity (e.g., 'Developer ID Application')"
             echo "  --notarize TEAM_ID         Notarize DMG (requires --sign)"
             echo "  --verbose,-v               Show detailed build output"
@@ -82,7 +82,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Examples:"
             echo "  $0                                    # Basic DMG creation (unsigned)"
-            echo "  $0 --dev-sign                         # Development signed (TCC permissions persist)"
+            echo "  $0 --dev-sign                         # Development signed"
             echo "  $0 --sign \"Developer ID Application: Name\" # Distribution signed DMG"
             echo "  $0 --sign \"Developer ID Application: Name\" --notarize TEAM_ID  # Signed and notarized"
             exit 0
@@ -99,6 +99,9 @@ echo "=================================================="
 echo "  Rugzak DMG Creator"
 echo "=================================================="
 echo ""
+
+# Ensure vendored dependencies are present before building
+bash "${PROJECT_ROOT}/scripts/vendor_init.sh"
 
 # Create output directories
 mkdir -p "${DIST_DIR}"
@@ -274,7 +277,7 @@ rm -rf "${MOUNT_DIR}"
 echo -e "${GREEN}✓ DMG created${NC}"
 echo ""
 
-# Code sign DMG if requested (skip for dev-sign as DMG signing isn't needed for TCC)
+# Code sign DMG if requested (skip for dev-sign)
 if [ "$SIGN" = true ]; then
     echo -e "${YELLOW}Signing DMG...${NC}"
     codesign --sign "${SIGNING_IDENTITY}" \
@@ -284,7 +287,6 @@ if [ "$SIGN" = true ]; then
     echo -e "${GREEN}✓ DMG signed${NC}"
 elif [ "$DEV_SIGN" = true ]; then
     echo -e "${BLUE}Skipping DMG signing for development build${NC}"
-    echo "  (App is signed, which is sufficient for TCC permissions)"
     echo ""
 fi
 
@@ -327,14 +329,16 @@ echo ""
 echo -e "${BLUE}Status:${NC}"
 if [ "$SIGN" = true ]; then
     echo "  ✅ Code signed"
+elif [ "$DEV_SIGN" = true ]; then
+    echo "  👷 Dev code signed"
 else
-    echo "  ⚠️  Not code signed"
+    echo "  ⚠️ Not code signed"
 fi
 
 if [ "$NOTARIZE" = true ]; then
     echo "  ✅ Notarized"
 else
-    echo "  ⚠️  Not notarized"
+    echo "  ⚠️ Not notarized"
 fi
 echo ""
 

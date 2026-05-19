@@ -1,0 +1,180 @@
+#!/bin/bash
+#
+#  SPDX-License-Identifier: MIT
+#  Copyright (c) 2026 Paal Øye-Strømme
+#
+#  vendor_build.sh
+#  Rugzak
+#
+#  Builds libarchive (static) and fuse-archive (universal arm64+x86_64) from vendored sources.
+#  Output: vendor/out/fuse-archive
+#
+#  Called by the Xcode "Build fuse-archive" run-script phase. Safe to run standalone.
+#
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+VENDOR_DIR="${ROOT_DIR}/vendor"
+OUT_DIR="${VENDOR_DIR}/out"
+LIBARCHIVE_SRC="${VENDOR_DIR}/libarchive"
+FUSE_SRC="${VENDOR_DIR}/fuse-archive"
+OUT_BINARY="${OUT_DIR}/fuse-archive"
+
+GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; NC='\033[0m'
+log() { echo -e "${YELLOW}▶ $*${NC}"; }
+ok()  { echo -e "${GREEN}✓ $*${NC}"; }
+err() { echo -e "${RED}✗ $*${NC}" >&2; }
+
+# ---------------------------------------------------------------------------
+# Skip if output is already fresh (Xcode input/output tracking also handles
+# this, but we check here for standalone runs too)
+# ---------------------------------------------------------------------------
+if [[ -f "${OUT_BINARY}" ]]; then
+    if ! find "${FUSE_SRC}" -name "*.cc" -newer "${OUT_BINARY}" | grep -q .; then
+        if ! find "${LIBARCHIVE_SRC}/libarchive" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
+            ok "fuse-archive binary is up to date — skipping build"
+            exit 0
+        fi
+    fi
+fi
+
+mkdir -p "${OUT_DIR}"
+
+# ---------------------------------------------------------------------------
+# Ensure vendored sources are present and at the correct commit
+# ---------------------------------------------------------------------------
+bash "${SCRIPT_DIR}/vendor_init.sh"
+
+# ---------------------------------------------------------------------------
+# Prerequisites
+# ---------------------------------------------------------------------------
+command -v cmake &>/dev/null || { err "cmake not found"; exit 1; }
+
+SYSROOT=$(xcrun --sdk macosx --show-sdk-path)
+NCPU=$(sysctl -n hw.ncpu)
+# Honour Xcode's deployment target when run as a build phase; fall back to a
+# safe minimum for standalone runs.
+MACOS_TARGET="${MACOSX_DEPLOYMENT_TARGET:-14.6}"
+
+# fuse3 pkg-config flags (macFUSE ships fuse3-compatible headers at /usr/local)
+if ! pkg-config --exists fuse3 2>/dev/null; then
+    err "fuse3 pkg-config not found. Install macFUSE from https://macfuse.github.io/ or brew install macfuse"
+    exit 1
+fi
+FUSE3_CFLAGS=$(pkg-config --cflags fuse3)
+FUSE3_LIBS=$(pkg-config --libs fuse3)
+
+# Use macOS system compression and iconv — no Homebrew required.
+# zlib, bzip2, and iconv ship with every macOS install.
+# xz/lzma, zstd, lz4 are disabled in libarchive cmake below.
+COMP_LIBS="-lz -lbz2 -liconv"
+
+# ---------------------------------------------------------------------------
+# Build libarchive (static) for a single arch
+# ---------------------------------------------------------------------------
+build_libarchive_arch() {
+    local ARCH="$1"
+    local PREFIX="${OUT_DIR}/libarchive_${ARCH}"
+    local BUILD="${OUT_DIR}/.cmake_libarchive_${ARCH}"
+
+    if [[ -f "${PREFIX}/lib/libarchive.a" ]]; then
+        echo "  libarchive (${ARCH}): cached"
+        return
+    fi
+
+    log "Building libarchive (${ARCH})..."
+    mkdir -p "${BUILD}"
+
+    cmake -S "${LIBARCHIVE_SRC}" -B "${BUILD}" \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_OSX_ARCHITECTURES="${ARCH}" \
+        -DCMAKE_OSX_SYSROOT="${SYSROOT}" \
+        -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOS_TARGET}" \
+        -DCMAKE_INSTALL_PREFIX="${PREFIX}" \
+        -DBUILD_SHARED_LIBS=OFF \
+        -DENABLE_TEST=OFF \
+        -DENABLE_TAR=OFF \
+        -DENABLE_CPIO=OFF \
+        -DENABLE_CAT=OFF \
+        -DENABLE_UNZIP=OFF \
+        -DENABLE_WERROR=OFF \
+        -DENABLE_OPENSSL=OFF \
+        -DENABLE_MBEDTLS=OFF \
+        -DENABLE_NETTLE=OFF \
+        -DENABLE_LIBXML2=OFF \
+        -DENABLE_EXPAT=OFF \
+        -DENABLE_PCREPOSIX=OFF \
+        -DENABLE_PCRE2POSIX=OFF \
+        -DENABLE_ACL=OFF \
+        -DENABLE_LIBB2=OFF \
+        -DENABLE_LZMA=OFF \
+        -DENABLE_LZ4=OFF \
+        -DENABLE_ZSTD=OFF \
+        -DCMAKE_C_FLAGS="-arch ${ARCH}" \
+        -Wno-dev \
+        >/dev/null 2>&1
+
+    cmake --build "${BUILD}" --parallel "${NCPU}" >/dev/null 2>&1
+    cmake --install "${BUILD}" >/dev/null 2>&1
+
+    ok "libarchive (${ARCH}): ${PREFIX}/lib/libarchive.a"
+}
+
+build_libarchive_arch arm64
+build_libarchive_arch x86_64
+
+# ---------------------------------------------------------------------------
+# Build fuse-archive for a single arch, linked against our static libarchive
+# ---------------------------------------------------------------------------
+build_fuse_archive_arch() {
+    local ARCH="$1"
+    local ARCH_BIN="${OUT_DIR}/fuse_archive_${ARCH}"
+    local ARCHIVE_A="${OUT_DIR}/libarchive_${ARCH}/lib/libarchive.a"
+    local ARCHIVE_INC="${OUT_DIR}/libarchive_${ARCH}/include"
+
+    if [[ -f "${ARCH_BIN}" ]]; then
+        echo "  fuse-archive (${ARCH}): cached"
+        return
+    fi
+
+    log "Building fuse-archive (${ARCH})..."
+
+    # Clean stale build artefacts from any previous arch build
+    make -C "${FUSE_SRC}" clean >/dev/null 2>&1 || true
+
+    local ARCH_FLAGS="-arch ${ARCH} -target ${ARCH}-apple-macos${MACOS_TARGET} -isysroot ${SYSROOT}"
+
+    # Let the Makefile use fuse3 (its default on macOS via pkg-config), but
+    # replace the libarchive half of PKG_* with our static build so we don't
+    # depend on the user's Homebrew libarchive at runtime.
+    make -C "${FUSE_SRC}" \
+        PKG_CXXFLAGS="${FUSE3_CFLAGS} -I${ARCHIVE_INC}" \
+        PKG_LDFLAGS="${FUSE3_LIBS} ${ARCHIVE_A} ${COMP_LIBS}" \
+        CXXFLAGS="${ARCH_FLAGS}" \
+        LDFLAGS="${ARCH_FLAGS}" \
+        -j"${NCPU}" \
+        >/dev/null 2>&1
+
+    cp "${FUSE_SRC}/out/fuse-archive" "${ARCH_BIN}"
+    make -C "${FUSE_SRC}" clean >/dev/null 2>&1 || true
+
+    ok "fuse-archive (${ARCH}): ${ARCH_BIN}"
+}
+
+build_fuse_archive_arch arm64
+build_fuse_archive_arch x86_64
+
+# ---------------------------------------------------------------------------
+# Stitch into a universal binary
+# ---------------------------------------------------------------------------
+log "Creating universal binary..."
+lipo -create \
+    "${OUT_DIR}/fuse_archive_arm64" \
+    "${OUT_DIR}/fuse_archive_x86_64" \
+    -output "${OUT_BINARY}"
+chmod +x "${OUT_BINARY}"
+
+ok "fuse-archive universal: ${OUT_BINARY}"
+echo "  $(file "${OUT_BINARY}")"

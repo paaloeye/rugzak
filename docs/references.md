@@ -4,3 +4,5 @@
 - https://sarunw.com/posts/detecting-xcode-previews/
 - [SWIFT_DEFAULT_ACTOR_ISOLATION](https://www.avanderlee.com/concurrency/default-actor-isolation-in-swift-6-2/)
 - https://github.com/EmergeTools/SnapshotPreviews
+- macFUSE:
+  - https://github.com/macfuse/macfuse/wiki/FUSE-Backends

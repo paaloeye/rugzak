@@ -6,9 +6,28 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		8A1B2C001A2B3C4D5E6F7A8B /* fuse-archive in Copy fuse-archive */ = {isa = PBXBuildFile; fileRef = 8A1B2C011A2B3C4D5E6F7A8B /* fuse-archive */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8A1B2C031A2B3C4D5E6F7A8B /* Copy fuse-archive */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				8A1B2C001A2B3C4D5E6F7A8B /* fuse-archive in Copy fuse-archive */,
+			);
+			name = "Copy fuse-archive";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		8A0380C12FB70F2600814CD3 /* Rugzak.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rugzak.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A0380D32FB7104600814CD3 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		8A1B2C011A2B3C4D5E6F7A8B /* fuse-archive */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = "fuse-archive"; path = "vendor/out/fuse-archive"; sourceTree = "<group>"; };
 		8A42EE322F4E40C40043865A /* GeneratedBuildInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = GeneratedBuildInfo.xcconfig; path = Config/GeneratedBuildInfo.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -69,6 +88,7 @@
 				8A2146342FBB821500929A97 /* Resources */,
 				8A0380C22FB70F2600814CD3 /* Products */,
 				8A42EE322F4E40C40043865A /* GeneratedBuildInfo.xcconfig */,
+				8A1B2C011A2B3C4D5E6F7A8B /* fuse-archive */,
 			);
 			sourceTree = "<group>";
 		};
@@ -88,9 +108,12 @@
 			buildConfigurationList = 8A0380CE2FB70F2700814CD3 /* Build configuration list for PBXNativeTarget "Rugzak" */;
 			buildPhases = (
 				F873B2B82F6F42A391E17D9E /* Generate Build Info */,
+				8A1B2C021A2B3C4D5E6F7A8B /* Build fuse-archive */,
 				8A0380BD2FB70F2600814CD3 /* Sources */,
 				8A0380BE2FB70F2600814CD3 /* Frameworks */,
 				8A0380BF2FB70F2600814CD3 /* Resources */,
+				8A1B2C031A2B3C4D5E6F7A8B /* Copy fuse-archive */,
+				8A1B2C041A2B3C4D5E6F7A8B /* Re-sign fuse-archive */,
 			);
 			buildRules = (
 			);
@@ -152,6 +175,50 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		8A1B2C021A2B3C4D5E6F7A8B /* Build fuse-archive */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/scripts/vendor_build.sh",
+				"$(SRCROOT)/vendor/fuse-archive/fuse-archive.cc",
+				"$(SRCROOT)/vendor/libarchive/libarchive/archive.h",
+			);
+			name = "Build fuse-archive";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/vendor/out/fuse-archive",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "bash \"${SRCROOT}/scripts/vendor_build.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8A1B2C041A2B3C4D5E6F7A8B /* Re-sign fuse-archive */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(CONTENTS_FOLDER_PATH)/MacOS/fuse-archive",
+				"$(SRCROOT)/Resources/fuse_archive.entitlements",
+			);
+			name = "Re-sign fuse-archive";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "codesign --force --sign \"${CODE_SIGN_IDENTITY}\" --entitlements \"${SRCROOT}/Resources/fuse_archive.entitlements\" --options runtime --timestamp \"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/MacOS/fuse-archive\"\n";
+			showEnvVarsInLog = 0;
+		};
 		F873B2B82F6F42A391E17D9E /* Generate Build Info */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
