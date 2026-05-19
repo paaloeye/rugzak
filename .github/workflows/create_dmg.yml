@@ -19,14 +19,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      # - name: Cache Swift Package Manager
-      #   uses: actions/cache@v5
-      #   with:
-      #       path: |
-      #           .tmp/DerivedData/**/SourcePackages
-      #       key: ${{ runner.os }}-spm-${{ hashFiles('Rugzak.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved') }}
-      #       restore-keys: |
-      #           ${{ runner.os }}-spm-
+      - name: Cache vendered dependencies
+        uses: actions/cache@v5
+        with:
+          path: |
+            vendor
+          key: ${{ runner.os }}-vendor-${{ hashFiles('scripts/vendor_init.sh') }}
+          restore-keys: |
+            ${{ runner.os }}-vendor-
 
       - name: Xcode Select
         run: sudo xcode-select -s /Applications/Xcode_26.3.app
