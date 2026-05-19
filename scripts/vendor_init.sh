@@ -33,6 +33,7 @@ fuse-archive|https://github.com/google/fuse-archive.git|27a902747a354a410852af3a
 xz|https://github.com/tukaani-project/xz.git|ebb0e6789cefe3be71756881aa8f2009fda9938c
 libb2|https://github.com/BLAKE2/libb2.git|2c5142f12a2cd52f3ee0a43e50a3a76f75badf85
 zstd|https://github.com/facebook/zstd.git|f8745da6ff1ad1e7bab384bd1f9d742439278e99
+lz4|https://github.com/lz4/lz4.git|ebb370ca83af193212df4dcbadcc5d87bc0de2f0
 libarchive|https://github.com/libarchive/libarchive.git|a651b4fcd8341a02bd36a20008c55f1aa9bd950f
 "
 

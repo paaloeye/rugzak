@@ -21,6 +21,7 @@ OUT_DIR="${VENDOR_DIR}/out"
 XZ_SRC="${VENDOR_DIR}/xz"
 LIBB2_SRC="${VENDOR_DIR}/libb2"
 ZSTD_SRC="${VENDOR_DIR}/zstd"
+LZ4_SRC="${VENDOR_DIR}/lz4"
 LIBARCHIVE_SRC="${VENDOR_DIR}/libarchive"
 FUSE_SRC="${VENDOR_DIR}/fuse-archive"
 OUT_BINARY="${OUT_DIR}/fuse-archive"
@@ -40,8 +41,10 @@ if [[ -f "${OUT_BINARY}" ]]; then
             if ! find "${XZ_SRC}/src/liblzma" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
                 if ! find "${LIBB2_SRC}/src" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
                     if ! find "${ZSTD_SRC}/lib" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
-                        ok "fuse-archive binary is up to date — skipping build"
-                        exit 0
+                        if ! find "${LZ4_SRC}/lib" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
+                            ok "fuse-archive binary is up to date — skipping build"
+                            exit 0
+                        fi
                     fi
                 fi
             fi
@@ -82,8 +85,7 @@ FUSE3_LIBS=$(pkg-config --libs fuse3)
 
 # Use macOS system compression and iconv — no Homebrew required.
 # zlib, bzip2, and iconv ship with every macOS install.
-# xz/lzma, blake2/libb2, and zstd are vendored and built below.
-# lz4 is disabled in libarchive cmake below.
+# xz/lzma, blake2/libb2, zstd, and lz4 are all vendored and built below.
 COMP_LIBS="-lz -lbz2 -liconv"
 
 # ---------------------------------------------------------------------------
@@ -225,6 +227,45 @@ build_libzstd_arch() {
     ok "libzstd (${ARCH}): ${PREFIX}/lib/libzstd.a"
 }
 
+# ---------------------------------------------------------------------------
+# Build liblz4 (static) for a single arch
+# ---------------------------------------------------------------------------
+build_liblz4_arch() {
+    local ARCH="$1"
+    local PREFIX="${OUT_DIR}/liblz4_${ARCH}"
+    local BUILD="${OUT_DIR}/.cmake_liblz4_${ARCH}"
+
+    if [[ -f "${PREFIX}/lib/liblz4.a" ]]; then
+        echo "  liblz4 (${ARCH}): cached"
+        return
+    fi
+
+    log "Building liblz4 (${ARCH})..."
+    mkdir -p "${BUILD}"
+
+    local LOG="${OUT_DIR}/.liblz4_${ARCH}.log"
+
+    cmake -S "${LZ4_SRC}/build/cmake" -B "${BUILD}" \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_OSX_ARCHITECTURES="${ARCH}" \
+        -DCMAKE_OSX_SYSROOT="${SYSROOT}" \
+        -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOS_TARGET}" \
+        -DCMAKE_INSTALL_PREFIX="${PREFIX}" \
+        -DBUILD_SHARED_LIBS=OFF \
+        -DLZ4_BUILD_CLI=OFF \
+        -DLZ4_BUILD_EXAMPLES=OFF \
+        -DCMAKE_C_FLAGS="-arch ${ARCH}" \
+        -Wno-dev \
+        >"${LOG}" 2>&1 || { err "cmake configure failed (liblz4 ${ARCH})"; cat "${LOG}"; return 1; }
+
+    cmake --build "${BUILD}" --parallel "${NCPU}" >>"${LOG}" 2>&1 \
+        || { err "cmake build failed (liblz4 ${ARCH})"; cat "${LOG}"; return 1; }
+    cmake --install "${BUILD}" >>"${LOG}" 2>&1 \
+        || { err "cmake install failed (liblz4 ${ARCH})"; cat "${LOG}"; return 1; }
+
+    ok "liblz4 (${ARCH}): ${PREFIX}/lib/liblz4.a"
+}
+
 build_liblzma_arch arm64
 build_liblzma_arch x86_64
 
@@ -233,6 +274,9 @@ build_libb2_arch x86_64
 
 build_libzstd_arch arm64
 build_libzstd_arch x86_64
+
+build_liblz4_arch arm64
+build_liblz4_arch x86_64
 
 # ---------------------------------------------------------------------------
 # Build libarchive (static) for a single arch
@@ -247,6 +291,8 @@ build_libarchive_arch() {
     local LIBB2_INC="${OUT_DIR}/libb2_${ARCH}/include"
     local ZSTD_A="${OUT_DIR}/libzstd_${ARCH}/lib/libzstd.a"
     local ZSTD_INC="${OUT_DIR}/libzstd_${ARCH}/include"
+    local LZ4_A="${OUT_DIR}/liblz4_${ARCH}/lib/liblz4.a"
+    local LZ4_INC="${OUT_DIR}/liblz4_${ARCH}/include"
 
     if [[ -f "${PREFIX}/lib/libarchive.a" ]]; then
         echo "  libarchive (${ARCH}): cached"
@@ -285,7 +331,9 @@ build_libarchive_arch() {
         -DENABLE_LZMA=ON \
         -DLIBLZMA_LIBRARY="${LZMA_A}" \
         -DLIBLZMA_INCLUDE_DIR="${LZMA_INC}" \
-        -DENABLE_LZ4=OFF \
+        -DENABLE_LZ4=ON \
+        -DLZ4_LIBRARY="${LZ4_A}" \
+        -DLZ4_INCLUDE_DIR="${LZ4_INC}" \
         -DENABLE_ZSTD=ON \
         -DZSTD_LIBRARY="${ZSTD_A}" \
         -DZSTD_INCLUDE_DIR="${ZSTD_INC}" \
@@ -318,6 +366,8 @@ build_fuse_archive_arch() {
     local LIBB2_INC="${OUT_DIR}/libb2_${ARCH}/include"
     local ZSTD_A="${OUT_DIR}/libzstd_${ARCH}/lib/libzstd.a"
     local ZSTD_INC="${OUT_DIR}/libzstd_${ARCH}/include"
+    local LZ4_A="${OUT_DIR}/liblz4_${ARCH}/lib/liblz4.a"
+    local LZ4_INC="${OUT_DIR}/liblz4_${ARCH}/include"
 
     if [[ -f "${ARCH_BIN}" ]]; then
         echo "  fuse-archive (${ARCH}): cached"
@@ -336,8 +386,8 @@ build_fuse_archive_arch() {
     # replace the libarchive half of PKG_* with our static build so we don't
     # depend on the user's Homebrew libarchive at runtime.
     make -C "${FUSE_SRC}" \
-        PKG_CXXFLAGS="${FUSE3_CFLAGS} -I${ARCHIVE_INC} -I${LZMA_INC} -I${LIBB2_INC} -I${ZSTD_INC}" \
-        PKG_LDFLAGS="${FUSE3_LIBS} ${ARCHIVE_A} ${LZMA_A} ${LIBB2_A} ${ZSTD_A} ${COMP_LIBS}" \
+        PKG_CXXFLAGS="${FUSE3_CFLAGS} -I${ARCHIVE_INC} -I${LZMA_INC} -I${LIBB2_INC} -I${ZSTD_INC} -I${LZ4_INC}" \
+        PKG_LDFLAGS="${FUSE3_LIBS} ${ARCHIVE_A} ${LZMA_A} ${LIBB2_A} ${ZSTD_A} ${LZ4_A} ${COMP_LIBS}" \
         CXXFLAGS="${ARCH_FLAGS}" \
         LDFLAGS="${ARCH_FLAGS}" \
         -j"${NCPU}" \
