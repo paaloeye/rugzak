@@ -38,7 +38,7 @@ Unmounting is one click away.
 git clone https://github.com/paaloeye/rugzak.git
 cd rugzak
 
-# 2. Check out vendored dependencies (fuse-archive, libarchive)
+# 2. Check out vendored dependencies (fuse-archive, libb2, libarchive)
 bash scripts/vendor_init.sh
 
 # 3. Bootstrap build metadata — required once so Xcode can open the project
@@ -48,7 +48,7 @@ bash scripts/generate_build_info.sh
 bash scripts/build.sh
 ```
 
-`vendor_init.sh` clones `fuse-archive` and `libarchive` into `vendor/` at their pinned commits.
+`vendor_init.sh` clones `fuse-archive`, `libb2`, and `libarchive` into `vendor/` at their pinned commits.
 `generate_build_info.sh` writes `Config/GeneratedBuildInfo.xcconfig`, which Xcode needs before
 the first build phase can run. Both scripts are idempotent; after the initial bootstrap all
 build phases run automatically inside Xcode on every subsequent build.
@@ -75,9 +75,10 @@ the list on launch and whenever macOS reports a disk event.
 ## Supported formats
 
 Rugzak passes the archive directly to the bundled `fuse-archive`.
-The bundled build links only macOS system libraries (zlib, bzip2, iconv) to keep the app
-self-contained. Formats requiring xz/lzma, zstd, lz4, or blake2 are not available in the bundled
-build; install `fuse-archive` via Homebrew and Rugzak will use it automatically as a fallback.
+The bundled build links macOS system libraries (zlib, bzip2, iconv) and the vendored libb2/BLAKE2
+static library to keep the app self-contained. Formats requiring xz/lzma, zstd, or lz4 are not
+available in the bundled build; install `fuse-archive` via Homebrew and Rugzak will use it
+automatically as a fallback.
 
 | Format group                                                              | Bundled | With Homebrew `fuse-archive` |
 | ------------------------------------------------------------------------- | ------- | ---------------------------- |
@@ -88,7 +89,7 @@ build; install `fuse-archive` via Homebrew and Rugzak will use it automatically 
 | `tar.lz4`                                                                 | 🔲      | ✅                           |
 | `7z`, `rar`, `cab`, `iso`, `lha`, `lzh`, `warc`, `mtree`                  | ✅      | ✅                           |
 | `cbr`                                                                     | ✅      | ✅                           |
-| RAR5 (blake2 checksums)                                                   | 🔲      | ✅                           |
+| RAR5 (blake2 checksums)                                                   | ✅      | ✅                           |
 | Compression filters `gz`, `bz2`, `z`                                      | ✅      | ✅                           |
 | Compression filters `xz`, `zst`, `lz4`, `lzma`, `lzo`, `br`, `lrz`, `grz` | 🔲      | ✅                           |
 | ASCII / encryption filters `base64`, `b64`, `uu`, `gpg`, `pgp`, `asc`     | ✅      | ✅                           |
@@ -133,8 +134,8 @@ Rugzak/
 
 - macFUSE mounts are **read-only**; you cannot write back into the archive.
 - Encrypted archives are **not yet supported** (v0.2 planned).
-- The bundled `fuse-archive` omits xz/lzma, zstd, lz4, and blake2 (RAR5 checksums). Install
-  `fuse-archive` via Homebrew for full format coverage.
+- The bundled `fuse-archive` omits xz/lzma, zstd, and lz4. Install `fuse-archive` via Homebrew
+  for full format coverage.
 
 ---
 

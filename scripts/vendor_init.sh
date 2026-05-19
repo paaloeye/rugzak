@@ -30,6 +30,7 @@ info() { echo -e "${BLUE}  $*${NC}"; }
 # ---------------------------------------------------------------------------
 VENDORS="
 fuse-archive|https://github.com/google/fuse-archive.git|27a902747a354a410852af3ae9735135789bd465
+libb2|https://github.com/BLAKE2/libb2.git|2c5142f12a2cd52f3ee0a43e50a3a76f75badf85
 libarchive|https://github.com/libarchive/libarchive.git|a651b4fcd8341a02bd36a20008c55f1aa9bd950f
 "
 
