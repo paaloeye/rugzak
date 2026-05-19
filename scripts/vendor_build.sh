@@ -87,6 +87,8 @@ build_libarchive_arch() {
     log "Building libarchive (${ARCH})..."
     mkdir -p "${BUILD}"
 
+    local LOG="${OUT_DIR}/.libarchive_${ARCH}.log"
+
     cmake -S "${LIBARCHIVE_SRC}" -B "${BUILD}" \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_OSX_ARCHITECTURES="${ARCH}" \
@@ -114,10 +116,12 @@ build_libarchive_arch() {
         -DENABLE_ZSTD=OFF \
         -DCMAKE_C_FLAGS="-arch ${ARCH}" \
         -Wno-dev \
-        >/dev/null 2>&1
+        >"${LOG}" 2>&1 || { err "cmake configure failed (libarchive ${ARCH})"; cat "${LOG}"; return 1; }
 
-    cmake --build "${BUILD}" --parallel "${NCPU}" >/dev/null 2>&1
-    cmake --install "${BUILD}" >/dev/null 2>&1
+    cmake --build "${BUILD}" --parallel "${NCPU}" >>"${LOG}" 2>&1 \
+        || { err "cmake build failed (libarchive ${ARCH})"; cat "${LOG}"; return 1; }
+    cmake --install "${BUILD}" >>"${LOG}" 2>&1 \
+        || { err "cmake install failed (libarchive ${ARCH})"; cat "${LOG}"; return 1; }
 
     ok "libarchive (${ARCH}): ${PREFIX}/lib/libarchive.a"
 }
@@ -145,6 +149,7 @@ build_fuse_archive_arch() {
     make -C "${FUSE_SRC}" clean >/dev/null 2>&1 || true
 
     local ARCH_FLAGS="-arch ${ARCH} -target ${ARCH}-apple-macos${MACOS_TARGET} -isysroot ${SYSROOT}"
+    local LOG="${OUT_DIR}/.fuse_archive_${ARCH}.log"
 
     # Let the Makefile use fuse3 (its default on macOS via pkg-config), but
     # replace the libarchive half of PKG_* with our static build so we don't
@@ -155,7 +160,7 @@ build_fuse_archive_arch() {
         CXXFLAGS="${ARCH_FLAGS}" \
         LDFLAGS="${ARCH_FLAGS}" \
         -j"${NCPU}" \
-        >/dev/null 2>&1
+        >"${LOG}" 2>&1 || { err "make failed (fuse-archive ${ARCH})"; cat "${LOG}"; return 1; }
 
     cp "${FUSE_SRC}/out/fuse-archive" "${ARCH_BIN}"
     make -C "${FUSE_SRC}" clean >/dev/null 2>&1 || true
