@@ -38,7 +38,7 @@ Unmounting is one click away.
 git clone https://github.com/paaloeye/rugzak.git
 cd rugzak
 
-# 2. Check out vendored dependencies (fuse-archive, libarchive)
+# 2. Check out vendored dependencies (fuse-archive, libarchive, etc.)
 bash scripts/vendor_init.sh
 
 # 3. Bootstrap build metadata — required once so Xcode can open the project
@@ -75,9 +75,8 @@ the list on launch and whenever macOS reports a disk event.
 ## Supported formats
 
 Rugzak passes the archive directly to the bundled `fuse-archive`.
-The bundled build links only macOS system libraries (zlib, bzip2, iconv) to keep the app
-self-contained. Formats requiring xz/lzma, zstd, lz4, or blake2 are not available in the bundled
-build; install `fuse-archive` via Homebrew and Rugzak will use it automatically as a fallback.
+The bundled `fuse-archive` links only macOS system libraries (zlib, bzip2, iconv, etc.) to keep the app
+self-contained.
 
 | Format group                                                              | Bundled | With Homebrew `fuse-archive` |
 | ------------------------------------------------------------------------- | ------- | ---------------------------- |
