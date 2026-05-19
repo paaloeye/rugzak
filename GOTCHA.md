@@ -20,9 +20,10 @@ filesystem writes (`Write` tool) are preferred for edits because they produce vi
 `FuseProcess.binaryPath()` checks `Bundle.main` first, then falls back to
 `/opt/homebrew/bin`, `/usr/local/bin`, and `$PATH` in that order.
 
-The bundled build links only macOS system libraries (zlib, bzip2, iconv) — no Homebrew runtime
-dependency. xz/lzma, zstd, lz4, and blake2 are intentionally omitted; install `fuse-archive` via
-Homebrew for full format coverage and Rugzak will prefer it automatically via the fallback chain.
+The bundled build links macOS system libraries (zlib, bzip2, iconv) and a vendored static lz4 —
+no Homebrew runtime dependency. xz/lzma, zstd, and blake2 are intentionally omitted; install
+`fuse-archive` via Homebrew for full format coverage and Rugzak will prefer it automatically via
+the fallback chain.
 
 Sources are vendored in `vendor/` (gitignored). Run `scripts/vendor_init.sh` to clone them at the
 pinned commits, then `scripts/vendor_build.sh` to compile. Both are called automatically by the
