@@ -20,6 +20,7 @@ VENDOR_DIR="${ROOT_DIR}/vendor"
 OUT_DIR="${VENDOR_DIR}/out"
 LIBARCHIVE_SRC="${VENDOR_DIR}/libarchive"
 FUSE_SRC="${VENDOR_DIR}/fuse-archive"
+ZSTD_SRC="${VENDOR_DIR}/zstd"
 OUT_BINARY="${OUT_DIR}/fuse-archive"
 
 GREEN='\033[0;32m'; YELLOW='\033[1;33m'; RED='\033[0;31m'; NC='\033[0m'
@@ -34,8 +35,10 @@ err() { echo -e "${RED}✗ $*${NC}" >&2; }
 if [[ -f "${OUT_BINARY}" ]]; then
     if ! find "${FUSE_SRC}" -name "*.cc" -newer "${OUT_BINARY}" | grep -q .; then
         if ! find "${LIBARCHIVE_SRC}/libarchive" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
-            ok "fuse-archive binary is up to date — skipping build"
-            exit 0
+            if ! find "${ZSTD_SRC}/lib" -name "*.c" -newer "${OUT_BINARY}" | grep -q .; then
+                ok "fuse-archive binary is up to date — skipping build"
+                exit 0
+            fi
         fi
     fi
 fi
@@ -73,8 +76,53 @@ FUSE3_LIBS=$(pkg-config --libs fuse3)
 
 # Use macOS system compression and iconv — no Homebrew required.
 # zlib, bzip2, and iconv ship with every macOS install.
-# xz/lzma, zstd, lz4 are disabled in libarchive cmake below.
+# zstd is vendored and built as a static fat library below.
+# xz/lzma and lz4 are disabled in libarchive cmake below.
 COMP_LIBS="-lz -lbz2 -liconv"
+
+# ---------------------------------------------------------------------------
+# Build libzstd (static) for a single arch
+# ---------------------------------------------------------------------------
+build_libzstd_arch() {
+    local ARCH="$1"
+    local PREFIX="${OUT_DIR}/libzstd_${ARCH}"
+    local BUILD="${OUT_DIR}/.cmake_libzstd_${ARCH}"
+
+    if [[ -f "${PREFIX}/lib/libzstd.a" ]]; then
+        echo "  libzstd (${ARCH}): cached"
+        return
+    fi
+
+    log "Building libzstd (${ARCH})..."
+    mkdir -p "${BUILD}"
+
+    local LOG="${OUT_DIR}/.libzstd_${ARCH}.log"
+
+    cmake -S "${ZSTD_SRC}/build/cmake" -B "${BUILD}" \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_OSX_ARCHITECTURES="${ARCH}" \
+        -DCMAKE_OSX_SYSROOT="${SYSROOT}" \
+        -DCMAKE_OSX_DEPLOYMENT_TARGET="${MACOS_TARGET}" \
+        -DCMAKE_INSTALL_PREFIX="${PREFIX}" \
+        -DZSTD_BUILD_SHARED=OFF \
+        -DZSTD_BUILD_STATIC=ON \
+        -DZSTD_BUILD_PROGRAMS=OFF \
+        -DZSTD_BUILD_TESTS=OFF \
+        -DZSTD_BUILD_CONTRIB=OFF \
+        -DCMAKE_C_FLAGS="-arch ${ARCH}" \
+        -Wno-dev \
+        >"${LOG}" 2>&1 || { err "cmake configure failed (libzstd ${ARCH})"; cat "${LOG}"; return 1; }
+
+    cmake --build "${BUILD}" --parallel "${NCPU}" >>"${LOG}" 2>&1 \
+        || { err "cmake build failed (libzstd ${ARCH})"; cat "${LOG}"; return 1; }
+    cmake --install "${BUILD}" >>"${LOG}" 2>&1 \
+        || { err "cmake install failed (libzstd ${ARCH})"; cat "${LOG}"; return 1; }
+
+    ok "libzstd (${ARCH}): ${PREFIX}/lib/libzstd.a"
+}
+
+build_libzstd_arch arm64
+build_libzstd_arch x86_64
 
 # ---------------------------------------------------------------------------
 # Build libarchive (static) for a single arch
@@ -83,6 +131,8 @@ build_libarchive_arch() {
     local ARCH="$1"
     local PREFIX="${OUT_DIR}/libarchive_${ARCH}"
     local BUILD="${OUT_DIR}/.cmake_libarchive_${ARCH}"
+    local ZSTD_A="${OUT_DIR}/libzstd_${ARCH}/lib/libzstd.a"
+    local ZSTD_INC="${OUT_DIR}/libzstd_${ARCH}/include"
 
     if [[ -f "${PREFIX}/lib/libarchive.a" ]]; then
         echo "  libarchive (${ARCH}): cached"
@@ -118,7 +168,9 @@ build_libarchive_arch() {
         -DENABLE_LIBB2=OFF \
         -DENABLE_LZMA=OFF \
         -DENABLE_LZ4=OFF \
-        -DENABLE_ZSTD=OFF \
+        -DENABLE_ZSTD=ON \
+        -DZSTD_LIBRARY="${ZSTD_A}" \
+        -DZSTD_INCLUDE_DIR="${ZSTD_INC}" \
         -DCMAKE_C_FLAGS="-arch ${ARCH}" \
         -Wno-dev \
         >"${LOG}" 2>&1 || { err "cmake configure failed (libarchive ${ARCH})"; cat "${LOG}"; return 1; }
@@ -142,6 +194,8 @@ build_fuse_archive_arch() {
     local ARCH_BIN="${OUT_DIR}/fuse_archive_${ARCH}"
     local ARCHIVE_A="${OUT_DIR}/libarchive_${ARCH}/lib/libarchive.a"
     local ARCHIVE_INC="${OUT_DIR}/libarchive_${ARCH}/include"
+    local ZSTD_A="${OUT_DIR}/libzstd_${ARCH}/lib/libzstd.a"
+    local ZSTD_INC="${OUT_DIR}/libzstd_${ARCH}/include"
 
     if [[ -f "${ARCH_BIN}" ]]; then
         echo "  fuse-archive (${ARCH}): cached"
@@ -160,8 +214,8 @@ build_fuse_archive_arch() {
     # replace the libarchive half of PKG_* with our static build so we don't
     # depend on the user's Homebrew libarchive at runtime.
     make -C "${FUSE_SRC}" \
-        PKG_CXXFLAGS="${FUSE3_CFLAGS} -I${ARCHIVE_INC}" \
-        PKG_LDFLAGS="${FUSE3_LIBS} ${ARCHIVE_A} ${COMP_LIBS}" \
+        PKG_CXXFLAGS="${FUSE3_CFLAGS} -I${ARCHIVE_INC} -I${ZSTD_INC}" \
+        PKG_LDFLAGS="${FUSE3_LIBS} ${ARCHIVE_A} ${ZSTD_A} ${COMP_LIBS}" \
         CXXFLAGS="${ARCH_FLAGS}" \
         LDFLAGS="${ARCH_FLAGS}" \
         -j"${NCPU}" \
