@@ -13,25 +13,35 @@ import SwiftUI
 struct AboutView: View {
     private let version: String
     private let build: String
-    private let commit: String
+    private let commit_hash: String
+    private let commit_hash_long: String
+    private let build_status: String
 
     init() {
         guard !Debug.isPreview else {
             version = "—"
             build = "—"
-            commit = "—"
+            commit_hash = "—"
+            commit_hash_long = "—"
+            build_status = "dirty"
             return
         }
 
         version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—"
         build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"
-        commit = Bundle.main.object(forInfoDictionaryKey: "GitCommitHash") as? String ?? "—"
+
+        commit_hash = Bundle.main.object(forInfoDictionaryKey: "GitCommitHash") as? String ?? "—"
+        commit_hash_long = Bundle.main.object(forInfoDictionaryKey: "GitCommitHashLong") as? String ?? "—"
+
+        build_status = Bundle.main.object(forInfoDictionaryKey: "GitBuildStatus") as? String ?? "dirty"
     }
 
-    fileprivate init(version: String, build: String, commit: String) {
+    fileprivate init(version: String, build: String, commit_hash: String, commit_hash_long: String, build_status: String) {
         self.version = version
         self.build = build
-        self.commit = commit
+        self.commit_hash = commit_hash
+        self.commit_hash_long = commit_hash_long
+        self.build_status = build_status
     }
 
     private static let repoURL = URL(string: "https://github.com/paaloeye/rugzak")!
@@ -80,8 +90,11 @@ struct AboutView: View {
                     GridRow {
                         Text("Commit")
                             .foregroundStyle(Color.brandText.opacity(0.6))
-                        Link(commit, destination: URL(string: Self.commitBase + commit) ?? Self.repoURL)
-                            .fontDesign(.monospaced)
+                        Link(
+                            build_status == "clean" ? commit_hash : commit_hash + "-" + build_status,
+                            destination: URL(string: Self.commitBase + commit_hash_long) ?? Self.repoURL
+                        )
+                        .fontDesign(.monospaced)
                     }
                 }
 
@@ -97,11 +110,16 @@ struct AboutView: View {
 }
 
 #Preview("Light") {
-    AboutView(version: "0.1", build: "1", commit: "4cef2d6")
+    AboutView(version: "0.1", build: "1", commit_hash: "cd10282", commit_hash_long: "cd102820552420b6f6c4950d30b0a2072b9d38fc", build_status: "clean")
         .preferredColorScheme(.light)
 }
 
 #Preview("Dark") {
-    AboutView(version: "0.1", build: "1", commit: "4cef2d6")
+    AboutView(version: "0.1", build: "1", commit_hash: "cd10282", commit_hash_long: "cd102820552420b6f6c4950d30b0a2072b9d38fc", build_status: "clean")
+        .preferredColorScheme(.dark)
+}
+
+#Preview("Dark - dirty") {
+    AboutView(version: "0.1", build: "1", commit_hash: "cd10282", commit_hash_long: "cd102820552420b6f6c4950d30b0a2072b9d38fc", build_status: "dirty")
         .preferredColorScheme(.dark)
 }

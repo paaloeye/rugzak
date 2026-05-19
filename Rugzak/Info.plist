@@ -8,6 +8,8 @@
 	<string>$(GIT_BUILD_STATUS)</string>
 	<key>GitCommitHash</key>
 	<string>$(GIT_COMMIT_HASH)</string>
+	<key>GitCommitHashLong</key>
+	<string>$(GIT_COMMIT_HASH_LONG)</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
