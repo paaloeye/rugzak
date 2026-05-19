@@ -1,16 +1,28 @@
 {
   "permissions": {
     "allow": [
+      "Bash(defaults read *)",
+      "Bash(gh label *)",
+      "Bash(gh label *)",
+      "Bash(gh log *)",
+      "Bash(gh pr *)",
+      "Bash(gh run *)",
       "Bash(log show *)",
+      "Bash(otool *)",
       "mcp__xcode__BuildProject",
       "mcp__xcode__GetBuildLog",
       "mcp__xcode__RenderPreview",
+      "mcp__xcode__XcodeGlob",
+      "mcp__xcode__XcodeGrep",
       "mcp__xcode__XcodeListNavigatorIssues",
       "mcp__xcode__XcodeListWindows",
       "mcp__xcode__XcodeLS",
       "mcp__xcode__XcodeMakeDir",
       "mcp__xcode__XcodeMV",
-      "mcp__xcode__XcodeRefreshCodeIssuesInFile"
+      "mcp__xcode__XcodeRead",
+      "mcp__xcode__XcodeRefreshCodeIssuesInFile",
+      "WebFetch(domain:api.github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
   "enabledMcpjsonServers": ["lldb", "xcode"]
