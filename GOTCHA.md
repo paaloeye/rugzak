@@ -39,6 +39,22 @@ previews on macOS — the toolbar chrome remains the default system colour regar
 is set. The modifier works correctly at runtime in the actual app. Do **not** treat a missing toolbar
 colour in a preview as a bug or attempt to work around it with AppKit hacks.
 
+## `generate_build_info.sh` Picks Up Wrong Git Repository in a Monorepo
+
+Set `ENABLE_USER_SCRIPT_SANDBOXING = NO` in the Xcode build settings. When sandboxing is enabled,
+the run-script phase that executes `generate_build_info.sh` runs in a restricted environment that
+cannot traverse up to the correct `.git` directory — it will either fail silently or resolve the
+wrong repository root, producing stale or incorrect build-info values.
+
+This is especially likely when the project lives inside a monorepo (e.g. `workspace/.../rugzak/`)
+because the nearest `.git` may be several levels above the `.xcodeproj`.
+
+**Fix:** In `project.pbxproj` (or via Xcode's Build Settings UI), ensure:
+
+```
+ENABLE_USER_SCRIPT_SANDBOXING = NO;
+```
+
 ## List crashes in SwiftUI Previews
 
 `List` on macOS is backed by `NSTableView` (`TableViewListCore_Mac2`). This crashes in the Xcode
