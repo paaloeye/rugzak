@@ -205,6 +205,7 @@
 		};
 		8A1B2C041A2B3C4D5E6F7A8B /* Re-sign fuse-archive */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);

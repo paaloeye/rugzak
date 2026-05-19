@@ -130,8 +130,10 @@ if [ "$SIGN" = true ]; then
         -scheme "${APP_NAME}" \
         -configuration "${BUILD_CONFIG}" \
         -derivedDataPath "${DERIVED_DATA}" \
-        -arch arm64 -arch x86_64 \
+        -destination "generic/platform=macOS" \
         build \
+        ARCHS="arm64 x86_64" \
+        ONLY_ACTIVE_ARCH=NO \
         CODE_SIGN_STYLE=Manual \
         CODE_SIGN_IDENTITY="${SIGNING_IDENTITY}" \
         CODE_SIGNING_REQUIRED=YES \
@@ -143,8 +145,10 @@ elif [ "$DEV_SIGN" = true ]; then
         -scheme "${APP_NAME}" \
         -configuration "${BUILD_CONFIG}" \
         -derivedDataPath "${DERIVED_DATA}" \
-        -arch arm64 -arch x86_64 \
+        -destination "generic/platform=macOS" \
         build \
+        ARCHS="arm64 x86_64" \
+        ONLY_ACTIVE_ARCH=NO \
         CODE_SIGN_STYLE=Automatic \
         | eval "$GREP_FILTER"
 else
@@ -153,8 +157,10 @@ else
         -scheme "${APP_NAME}" \
         -configuration "${BUILD_CONFIG}" \
         -derivedDataPath "${DERIVED_DATA}" \
-        -arch arm64 -arch x86_64 \
+        -destination "generic/platform=macOS" \
         build \
+        ARCHS="arm64 x86_64" \
+        ONLY_ACTIVE_ARCH=NO \
         CODE_SIGN_IDENTITY="-" \
         CODE_SIGNING_REQUIRED=NO \
         | eval "$GREP_FILTER"

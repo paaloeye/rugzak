@@ -108,8 +108,10 @@ if [ "$DEV_SIGN" = true ]; then
         -scheme "Rugzak" \
         -configuration "${BUILD_CONFIG}" \
         -derivedDataPath "${DERIVED_DATA}" \
-        -arch arm64 -arch x86_64 \
+        -destination "generic/platform=macOS" \
         build \
+        ARCHS="arm64 x86_64" \
+        ONLY_ACTIVE_ARCH=NO \
         CODE_SIGN_IDENTITY="Apple Development" \
         CODE_SIGNING_REQUIRED=YES \
         | eval "$GREP_FILTER"
@@ -119,8 +121,10 @@ else
         -scheme "Rugzak" \
         -configuration "${BUILD_CONFIG}" \
         -derivedDataPath "${DERIVED_DATA}" \
-        -arch arm64 -arch x86_64 \
+        -destination "generic/platform=macOS" \
         build \
+        ARCHS="arm64 x86_64" \
+        ONLY_ACTIVE_ARCH=NO \
         CODE_SIGN_IDENTITY="-" \
         CODE_SIGNING_REQUIRED=NO \
         CODE_SIGNING_ALLOWED=NO \
