@@ -38,7 +38,7 @@ Unmounting is one click away.
 git clone https://github.com/paaloeye/rugzak.git
 cd rugzak
 
-# 2. Check out vendored dependencies (fuse-archive, libarchive, etc.)
+# 2. Check out vendored dependencies
 bash scripts/vendor_init.sh
 
 # 3. Bootstrap build metadata — required once so Xcode can open the project
@@ -48,7 +48,7 @@ bash scripts/generate_build_info.sh
 bash scripts/build.sh
 ```
 
-`vendor_init.sh` clones `fuse-archive` and `libarchive` into `vendor/` at their pinned commits.
+`vendor_init.sh` clones `fuse-archive`, `xz`, `libb2`, `zstd`, `lz4`, and `libarchive` into `vendor/` at their pinned commits.
 `generate_build_info.sh` writes `Config/GeneratedBuildInfo.xcconfig`, which Xcode needs before
 the first build phase can run. Both scripts are idempotent; after the initial bootstrap all
 build phases run automatically inside Xcode on every subsequent build.
@@ -75,22 +75,26 @@ the list on launch and whenever macOS reports a disk event.
 ## Supported formats
 
 Rugzak passes the archive directly to the bundled `fuse-archive`.
-The bundled `fuse-archive` links only macOS system libraries (zlib, bzip2, iconv, etc.) to keep the app
-self-contained.
+The bundled `fuse-archive` links macOS system libraries (zlib, bzip2, iconv) plus vendored
+liblzma, libb2/BLAKE2, libzstd, and liblz4 — all compression formats are covered with no
+Homebrew runtime dependency.
 
-| Format group                                                              | Bundled | With Homebrew `fuse-archive` |
-| ------------------------------------------------------------------------- | ------- | ---------------------------- |
-| `zip`, `zipx`, `jar`, `war`, `apk`, `ipa`, `epub`, `cbz`, …               | ✅      | ✅                           |
-| `tar`, `tar.gz`, `tar.bz2`, `cpio`, `ar`, `deb`, `rpm`                    | ✅      | ✅                           |
-| `tar.xz`, `tar.lzma`, `xip`, `xar`                                        | 🔲      | ✅                           |
-| `tar.zst`                                                                 | 🔲      | ✅                           |
-| `tar.lz4`                                                                 | 🔲      | ✅                           |
-| `7z`, `rar`, `cab`, `iso`, `lha`, `lzh`, `warc`, `mtree`                  | ✅      | ✅                           |
-| `cbr`                                                                     | ✅      | ✅                           |
-| RAR5 (blake2 checksums)                                                   | 🔲      | ✅                           |
-| Compression filters `gz`, `bz2`, `z`                                      | ✅      | ✅                           |
-| Compression filters `xz`, `zst`, `lz4`, `lzma`, `lzo`, `br`, `lrz`, `grz` | 🔲      | ✅                           |
-| ASCII / encryption filters `base64`, `b64`, `uu`, `gpg`, `pgp`, `asc`     | ✅      | ✅                           |
+| Format group                                                          | Bundled | With Homebrew `fuse-archive` |
+| --------------------------------------------------------------------- | ------- | ---------------------------- |
+| `zip`, `zipx`, `jar`, `war`, `apk`, `ipa`, `epub`, `cbz`, …           | ✅      | ✅                           |
+| `tar`, `tar.gz`, `tar.bz2`, `cpio`, `ar`, `deb`, `rpm`                | ✅      | ✅                           |
+| `tar.xz`, `tar.lzma`, `xip`, `xar`                                    | ✅      | ✅                           |
+| `tar.zst`                                                             | ✅      | ✅                           |
+| `tar.lz4`                                                             | ✅      | ✅                           |
+| `7z`, `rar`, `cab`, `iso`, `lha`, `lzh`, `warc`, `mtree`              | ✅      | ✅                           |
+| `cbr`                                                                 | ✅      | ✅                           |
+| RAR5 (blake2 checksums)                                               | ✅      | ✅                           |
+| Compression filters `gz`, `bz2`, `z`                                  | ✅      | ✅                           |
+| Compression filters `xz`, `lzma`                                      | ✅      | ✅                           |
+| Compression filter `zst`                                              | ✅      | ✅                           |
+| Compression filter `lz4`                                              | ✅      | ✅                           |
+| Compression filters `lzo`, `br`, `lrz`, `grz`                         | 🔲      | ✅                           |
+| ASCII / encryption filters `base64`, `b64`, `uu`, `gpg`, `pgp`, `asc` | ✅      | ✅                           |
 
 > [!NOTE]
 > Encrypted archives (password-protected zip, gpg, …) are not supported in v0.1. Full UI for
@@ -132,8 +136,6 @@ Rugzak/
 
 - macFUSE mounts are **read-only**; you cannot write back into the archive.
 - Encrypted archives are **not yet supported** (v0.2 planned).
-- The bundled `fuse-archive` omits xz/lzma, zstd, lz4, and blake2 (RAR5 checksums). Install
-  `fuse-archive` via Homebrew for full format coverage.
 
 ---
 
