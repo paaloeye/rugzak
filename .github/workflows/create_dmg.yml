@@ -71,7 +71,7 @@ jobs:
           path: .dist/*.dmg
           retention-days: 30
           if-no-files-found: error
-          include-hidden-files: false
+          include-hidden-files: true # required due to `.dist` being ignored when `false`
           archive: false
 
       - name: Create Release
