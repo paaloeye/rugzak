@@ -37,6 +37,9 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
+            TranslucentBackgroundEffect(material: .underWindowBackground, blendingMode: .behindWindow)
+                .ignoresSafeArea()
+
             DropTargetView(dropState: $dropState)
 
             VStack(spacing: 0) {
@@ -66,9 +69,7 @@ struct ContentView: View {
                 .help("About Rugzak")
             }
         }
-        .toolbarBackground(Color.brandBackground, for: .windowToolbar)
-        .toolbarBackground(.visible, for: .windowToolbar)
-        .background(Color.brandBackground)
+        .toolbarBackground(.thinMaterial, for: .windowToolbar)
     }
 
     private var emptyState: some View {
