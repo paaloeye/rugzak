@@ -20,9 +20,10 @@
 			);
 			target = 8A0380C02FB70F2600814CD3 /* Rugzak */;
 		};
-		8A21471B2FBBAD3800929A97 /* Exceptions for "Resources" folder in "Rugzak" target */ = {
+		8ADF06A72FBBEBAF00FD3507 /* Exceptions for "Resources" folder in "Rugzak" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				colours.md,
 				RugzakAppIcon.icon,
 				RugzakAppIconDebug.icon,
 			);
@@ -42,7 +43,7 @@
 		8A2146342FBB821500929A97 /* Resources */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				8A21471B2FBBAD3800929A97 /* Exceptions for "Resources" folder in "Rugzak" target */,
+				8ADF06A72FBBEBAF00FD3507 /* Exceptions for "Resources" folder in "Rugzak" target */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
