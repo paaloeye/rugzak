@@ -26,6 +26,7 @@ repos:
         args:
           [
             "govern",
+            "agent",
             "build",
             "chore",
             "ci",
