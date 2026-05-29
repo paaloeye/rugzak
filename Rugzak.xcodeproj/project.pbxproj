@@ -222,7 +222,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "codesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY}\" --entitlements \"${SRCROOT}/Resources/fuse_archive.entitlements\" --options runtime --timestamp \"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/MacOS/fuse-archive\"\n";
+			shellScript = "if [ \"${CODE_SIGNING_ALLOWED}\" != \"YES\" ] || [ -z \"${EXPANDED_CODE_SIGN_IDENTITY}\" ]; then exit 0; fi\ncodesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY}\" --entitlements \"${SRCROOT}/Resources/fuse_archive.entitlements\" --options runtime --timestamp \"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/MacOS/fuse-archive\"\n";
 		};
 		F873B2B82F6F42A391E17D9E /* Generate Build Info */ = {
 			isa = PBXShellScriptBuildPhase;
