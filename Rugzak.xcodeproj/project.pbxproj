@@ -222,8 +222,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "codesign --force --sign \"${CODE_SIGN_IDENTITY}\" --entitlements \"${SRCROOT}/Resources/fuse_archive.entitlements\" --options runtime --timestamp \"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/MacOS/fuse-archive\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "codesign --force --sign \"${EXPANDED_CODE_SIGN_IDENTITY}\" --entitlements \"${SRCROOT}/Resources/fuse_archive.entitlements\" --options runtime --timestamp \"${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/MacOS/fuse-archive\"\n";
 		};
 		F873B2B82F6F42A391E17D9E /* Generate Build Info */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -268,7 +267,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YAB3WFDM47;
+				DEVELOPMENT_TEAM = 7GM8GVF5V8;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -305,7 +304,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YAB3WFDM47;
+				DEVELOPMENT_TEAM = 7GM8GVF5V8;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
