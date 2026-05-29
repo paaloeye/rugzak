@@ -43,6 +43,9 @@ NOTARIZE=false
 VERBOSE=false
 SIGNING_IDENTITY=""
 TEAM_ID=""
+APPLE_ID=""
+NOTARIZE_PASSWORD=""
+KEYCHAIN_PROFILE=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -65,6 +68,18 @@ while [[ $# -gt 0 ]]; do
             TEAM_ID="$2"
             shift 2
             ;;
+        --apple-id)
+            APPLE_ID="$2"
+            shift 2
+            ;;
+        --password)
+            NOTARIZE_PASSWORD="$2"
+            shift 2
+            ;;
+        --keychain-profile)
+            KEYCHAIN_PROFILE="$2"
+            shift 2
+            ;;
         --verbose|-v)
             VERBOSE=true
             shift
@@ -77,6 +92,9 @@ while [[ $# -gt 0 ]]; do
             echo "  --dev-sign                 Sign with Apple Development"
             echo "  --sign IDENTITY            Code sign with specified identity (e.g., 'Developer ID Application')"
             echo "  --notarize TEAM_ID         Notarize DMG (requires --sign)"
+            echo "  --keychain-profile NAME    Keychain profile for notarytool (preferred)"
+            echo "  --apple-id EMAIL           Apple ID for notarization (alternative to --keychain-profile)"
+            echo "  --password PASS            App-specific password for notarization (use @keychain:NAME to read from Keychain)"
             echo "  --verbose,-v               Show detailed build output"
             echo "  --help,-h                  Show this help message"
             echo ""
@@ -84,7 +102,11 @@ while [[ $# -gt 0 ]]; do
             echo "  $0                                    # Basic DMG creation (unsigned)"
             echo "  $0 --dev-sign                         # Development signed"
             echo "  $0 --sign \"Developer ID Application: Name\" # Distribution signed DMG"
-            echo "  $0 --sign \"Developer ID Application: Name\" --notarize TEAM_ID  # Signed and notarized"
+            echo "  $0 --sign \"Developer ID Application: Name\" --notarize TEAM_ID --keychain-profile AC_PASSWORD"
+            echo "  $0 --sign \"Developer ID Application: Name\" --notarize TEAM_ID --apple-id you@example.com --password @keychain:AC_PASSWORD"
+            echo ""
+            echo "Store credentials in Keychain (one-time setup):"
+            echo "  xcrun notarytool store-credentials AC_PASSWORD --apple-id you@example.com --team-id TEAM_ID"
             exit 0
             ;;
         *)
@@ -137,6 +159,8 @@ if [ "$SIGN" = true ]; then
         CODE_SIGN_STYLE=Manual \
         CODE_SIGN_IDENTITY="${SIGNING_IDENTITY}" \
         CODE_SIGNING_REQUIRED=YES \
+        CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO \
+        OTHER_CODE_SIGN_FLAGS="--timestamp" \
         | eval "$GREP_FILTER"
 elif [ "$DEV_SIGN" = true ]; then
     echo "  Code signing: automatic (Apple Development)"
@@ -306,9 +330,56 @@ if [ "$NOTARIZE" = true ]; then
     echo -e "${YELLOW}Submitting DMG for notarization...${NC}"
     echo "  (This may take several minutes)"
 
-    xcrun notarytool submit "${FINAL_DMG}" \
-        --team-id "${TEAM_ID}" \
-        --wait
+    NOTARIZE_AUTH_ARGS=()
+    if [ -n "${KEYCHAIN_PROFILE}" ]; then
+        NOTARIZE_AUTH_ARGS=(--keychain-profile "${KEYCHAIN_PROFILE}")
+    elif [ -n "${APPLE_ID}" ] && [ -n "${NOTARIZE_PASSWORD}" ]; then
+        NOTARIZE_AUTH_ARGS=(--apple-id "${APPLE_ID}" --password "${NOTARIZE_PASSWORD}" --team-id "${TEAM_ID}")
+    else
+        echo -e "${RED}Error: notarization requires either --keychain-profile or both --apple-id and --password${NC}"
+        echo ""
+        echo "Store credentials once:"
+        echo "  xcrun notarytool store-credentials AC_PASSWORD --apple-id you@example.com --team-id ${TEAM_ID}"
+        echo ""
+        echo "Then re-run with:"
+        echo "  $0 --sign \"...\" --notarize ${TEAM_ID} --keychain-profile AC_PASSWORD"
+        exit 1
+    fi
+
+    SUBMIT_OUTPUT=$(xcrun notarytool submit "${FINAL_DMG}" \
+        "${NOTARIZE_AUTH_ARGS[@]}" 2>&1)
+    echo "${SUBMIT_OUTPUT}"
+
+    SUBMISSION_ID=$(echo "${SUBMIT_OUTPUT}" | grep "  id:" | head -1 | awk '{print $2}')
+
+    if [ -z "${SUBMISSION_ID}" ]; then
+        echo -e "${RED}✗ Failed to obtain submission ID — upload may have failed${NC}"
+        exit 1
+    fi
+
+    echo ""
+    echo -e "${BLUE}Submission ID: ${SUBMISSION_ID}${NC}"
+    echo "  Monitor:  xcrun notarytool info     ${NOTARIZE_AUTH_ARGS[*]} ${SUBMISSION_ID}"
+    echo "  Log:      xcrun notarytool log      ${NOTARIZE_AUTH_ARGS[*]} ${SUBMISSION_ID}"
+    echo "  History:  xcrun notarytool history  ${NOTARIZE_AUTH_ARGS[*]}"
+    echo ""
+    echo -e "${YELLOW}Waiting for Apple notarization service...${NC}"
+
+    WAIT_OUTPUT=$(xcrun notarytool wait "${SUBMISSION_ID}" \
+        "${NOTARIZE_AUTH_ARGS[@]}" 2>&1)
+    echo "${WAIT_OUTPUT}"
+
+    NOTARIZE_STATUS=$(echo "${WAIT_OUTPUT}" | grep "  status:" | awk '{print $2}')
+
+    if [ "${NOTARIZE_STATUS}" != "Accepted" ]; then
+        echo -e "${RED}✗ Notarization failed (status: ${NOTARIZE_STATUS})${NC}"
+        if [ -n "${SUBMISSION_ID}" ]; then
+            echo ""
+            echo -e "${YELLOW}Fetching notarization log for submission ${SUBMISSION_ID}...${NC}"
+            xcrun notarytool log "${SUBMISSION_ID}" "${NOTARIZE_AUTH_ARGS[@]}" 2>&1
+        fi
+        exit 1
+    fi
 
     echo -e "${YELLOW}Stapling notarization ticket...${NC}"
     xcrun stapler staple "${FINAL_DMG}"
