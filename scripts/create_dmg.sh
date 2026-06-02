@@ -372,7 +372,7 @@ if [ "$NOTARIZE" = true ]; then
     fi
 
     SUBMIT_OUTPUT=$(xcrun notarytool submit "${FINAL_DMG}" \
-        "${NOTARIZE_AUTH_ARGS[@]}" 2>&1)
+        "${NOTARIZE_AUTH_ARGS[@]}" 2>&1) || true
     echo "${SUBMIT_OUTPUT}"
 
     SUBMISSION_ID=$(echo "${SUBMIT_OUTPUT}" | grep "  id:" | head -1 | awk '{print $2}')
