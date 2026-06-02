@@ -1,21 +1,14 @@
 # :school_satchel: Rugzak
 
-> A minimal macOS app that mounts archives as read-only virtual disks via
-> [fuse-archive](https://github.com/google/fuse-archive) and [macFUSE](https://github.com/macfuse/macfuse).
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/screenshot_dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/screenshots/screenshot_light.png">
+  <img alt="Rugzak" src="docs/screenshots/screenshot_dark.png">
+</picture>
 
 Drop a zip, tar, or any supported archive onto the Dock icon or the window — **Rugzak** mounts it
 instantly under `~/Mounts/<name>/` and keeps a live list of what is mounted and where.
 Unmounting is one click away.
-
-<div align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/screenshot_dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="docs/screenshots/screenshot_light.png">
-    <img alt="Rugzak main window" src="docs/screenshots/screenshot_light.png" width="600">
-  </picture>
-</div>
-
----
 
 ## Requirements
 
