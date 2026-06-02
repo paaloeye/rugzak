@@ -350,6 +350,14 @@ if [ "$NOTARIZE" = true ]; then
 
     NOTARIZE_AUTH_ARGS=()
     if [ -n "${API_KEY_PATH}" ] && [ -n "${API_KEY_ID}" ] && [ -n "${API_ISSUER}" ]; then
+        echo "  Auth:     App Store Connect API key"
+        echo "  Key ID:   ${API_KEY_ID}"
+        echo "  Issuer:   ${API_ISSUER}"
+        echo "  Key path: ${API_KEY_PATH}"
+        if [ ! -f "${API_KEY_PATH}" ]; then
+            echo -e "${RED}✗ API key file not found: ${API_KEY_PATH}${NC}"
+            exit 1
+        fi
         NOTARIZE_AUTH_ARGS=(--key "${API_KEY_PATH}" --key-id "${API_KEY_ID}" --issuer "${API_ISSUER}")
     elif [ -n "${KEYCHAIN_PROFILE}" ]; then
         NOTARIZE_AUTH_ARGS=(--keychain-profile "${KEYCHAIN_PROFILE}")
