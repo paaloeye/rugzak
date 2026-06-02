@@ -46,6 +46,35 @@ jobs:
       - name: Build vendored dependencies
         run: ./scripts/vendor_build.sh
 
+      - name: Import signing certificate
+        env:
+          SIGNING_CERTIFICATE_P12_BASE64: ${{ secrets.SIGNING_CERTIFICATE_P12_BASE64 }}
+          SIGNING_CERTIFICATE_PASSWORD: ${{ secrets.SIGNING_CERTIFICATE_PASSWORD }}
+        run: |
+          KEYCHAIN_PATH="${RUNNER_TEMP}/signing.keychain-db"
+          KEYCHAIN_PASSWORD="$(openssl rand -hex 32)"
+          security create-keychain -p "${KEYCHAIN_PASSWORD}" "${KEYCHAIN_PATH}"
+          security set-keychain-settings -lut 3600 "${KEYCHAIN_PATH}"
+          security unlock-keychain -p "${KEYCHAIN_PASSWORD}" "${KEYCHAIN_PATH}"
+          echo "${SIGNING_CERTIFICATE_P12_BASE64}" | base64 --decode > "${RUNNER_TEMP}/certificate.p12"
+          security import "${RUNNER_TEMP}/certificate.p12" \
+            -k "${KEYCHAIN_PATH}" \
+            -P "${SIGNING_CERTIFICATE_PASSWORD}" \
+            -T /usr/bin/codesign
+          security list-keychain -d user -s "${KEYCHAIN_PATH}"
+          security set-key-partition-list \
+            -S apple-tool:,apple:,codesign: \
+            -s -k "${KEYCHAIN_PASSWORD}" "${KEYCHAIN_PATH}"
+
+      - name: Write App Store Connect API key
+        env:
+          ASC_API_KEY_BASE64: ${{ secrets.ASC_API_KEY_BASE64 }}
+          ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+        run: |
+          mkdir -p "${RUNNER_TEMP}/private_keys"
+          echo "${ASC_API_KEY_BASE64}" | base64 --decode \
+            > "${RUNNER_TEMP}/private_keys/AuthKey_${ASC_API_KEY_ID}.p8"
+
       - name: Set build
         run: agvtool new-version ${{ github.run_number }}
 
@@ -53,7 +82,19 @@ jobs:
         run: ./scripts/generate_build_info.sh
 
       - name: Create DMG
-        run: ./scripts/create_dmg.sh --verbose
+        env:
+          ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+          ASC_API_ISSUER: ${{ secrets.ASC_API_ISSUER }}
+          SIGNING_IDENTITY: ${{ secrets.SIGNING_IDENTITY }}
+          SIGNING_TEAM_ID: ${{ secrets.SIGNING_TEAM_ID }}
+        run: |
+          ./scripts/create_dmg.sh \
+            --sign "${SIGNING_IDENTITY}" \
+            --notarize "${SIGNING_TEAM_ID}" \
+            --api-key "${RUNNER_TEMP}/private_keys/AuthKey_${ASC_API_KEY_ID}.p8" \
+            --api-key-id "${ASC_API_KEY_ID}" \
+            --api-issuer "${ASC_API_ISSUER}" \
+            --verbose
 
       - name: Get DMG info
         id: dmg_info
@@ -83,11 +124,21 @@ jobs:
           include-hidden-files: true # required due to `.dist` being ignored when `false`
           archive: false
 
+      - name: Clean up keychain and API key
+        if: ${{ always() }}
+        env:
+          ASC_API_KEY_ID: ${{ secrets.ASC_API_KEY_ID }}
+        run: |
+          security delete-keychain "${RUNNER_TEMP}/signing.keychain-db" || true
+          rm -f "${RUNNER_TEMP}/certificate.p12"
+          rm -f "${RUNNER_TEMP}/private_keys/AuthKey_${ASC_API_KEY_ID}.p8"
+
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           files: .dist/*.dmg
+          generate_release_notes: true
           body: |
             ## Rugzak ${{ github.ref_name }}
 
@@ -99,8 +150,5 @@ jobs:
             ### Build Information
             - **Size**: ${{ steps.dmg_info.outputs.dmg_size }}
             - **SHA256**: `${{ steps.dmg_info.outputs.dmg_sha256 }}`
-
-          draft: false
-          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

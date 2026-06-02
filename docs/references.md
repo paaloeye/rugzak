@@ -6,3 +6,5 @@
 - https://github.com/EmergeTools/SnapshotPreviews
 - macFUSE:
   - https://github.com/macfuse/macfuse/wiki/FUSE-Backends
+- Github Actions:
+  - https://docs.github.com/en/actions/how-tos/deploy/deploy-to-third-party-platforms/sign-xcode-applications

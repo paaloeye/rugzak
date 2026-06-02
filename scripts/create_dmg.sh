@@ -46,6 +46,9 @@ TEAM_ID=""
 APPLE_ID=""
 NOTARIZE_PASSWORD=""
 KEYCHAIN_PROFILE=""
+API_KEY_PATH=""
+API_KEY_ID=""
+API_ISSUER=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -80,6 +83,18 @@ while [[ $# -gt 0 ]]; do
             KEYCHAIN_PROFILE="$2"
             shift 2
             ;;
+        --api-key)
+            API_KEY_PATH="$2"
+            shift 2
+            ;;
+        --api-key-id)
+            API_KEY_ID="$2"
+            shift 2
+            ;;
+        --api-issuer)
+            API_ISSUER="$2"
+            shift 2
+            ;;
         --verbose|-v)
             VERBOSE=true
             shift
@@ -92,9 +107,12 @@ while [[ $# -gt 0 ]]; do
             echo "  --dev-sign                 Sign with Apple Development"
             echo "  --sign IDENTITY            Code sign with specified identity (e.g., 'Developer ID Application')"
             echo "  --notarize TEAM_ID         Notarize DMG (requires --sign)"
-            echo "  --keychain-profile NAME    Keychain profile for notarytool (preferred)"
-            echo "  --apple-id EMAIL           Apple ID for notarization (alternative to --keychain-profile)"
-            echo "  --password PASS            App-specific password for notarization (use @keychain:NAME to read from Keychain)"
+            echo "  --keychain-profile NAME    Keychain profile for notarytool (local dev)"
+            echo "  --apple-id EMAIL           Apple ID for notarization"
+            echo "  --password PASS            App-specific password (use @keychain:NAME to read from Keychain)"
+            echo "  --api-key PATH             Path to App Store Connect API key .p8 file (CI preferred)"
+            echo "  --api-key-id ID            App Store Connect API key ID"
+            echo "  --api-issuer ID            App Store Connect issuer ID"
             echo "  --verbose,-v               Show detailed build output"
             echo "  --help,-h                  Show this help message"
             echo ""
@@ -331,18 +349,17 @@ if [ "$NOTARIZE" = true ]; then
     echo "  (This may take several minutes)"
 
     NOTARIZE_AUTH_ARGS=()
-    if [ -n "${KEYCHAIN_PROFILE}" ]; then
+    if [ -n "${API_KEY_PATH}" ] && [ -n "${API_KEY_ID}" ] && [ -n "${API_ISSUER}" ]; then
+        NOTARIZE_AUTH_ARGS=(--key "${API_KEY_PATH}" --key-id "${API_KEY_ID}" --issuer "${API_ISSUER}")
+    elif [ -n "${KEYCHAIN_PROFILE}" ]; then
         NOTARIZE_AUTH_ARGS=(--keychain-profile "${KEYCHAIN_PROFILE}")
     elif [ -n "${APPLE_ID}" ] && [ -n "${NOTARIZE_PASSWORD}" ]; then
         NOTARIZE_AUTH_ARGS=(--apple-id "${APPLE_ID}" --password "${NOTARIZE_PASSWORD}" --team-id "${TEAM_ID}")
     else
-        echo -e "${RED}Error: notarization requires either --keychain-profile or both --apple-id and --password${NC}"
-        echo ""
-        echo "Store credentials once:"
-        echo "  xcrun notarytool store-credentials AC_PASSWORD --apple-id you@example.com --team-id ${TEAM_ID}"
-        echo ""
-        echo "Then re-run with:"
-        echo "  $0 --sign \"...\" --notarize ${TEAM_ID} --keychain-profile AC_PASSWORD"
+        echo -e "${RED}Error: notarization requires one of:${NC}"
+        echo "  --api-key PATH --api-key-id ID --api-issuer ID   (CI / App Store Connect API key)"
+        echo "  --keychain-profile NAME                          (local dev)"
+        echo "  --apple-id EMAIL --password PASS                 (app-specific password)"
         exit 1
     fi
 
