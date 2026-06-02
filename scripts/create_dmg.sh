@@ -391,7 +391,7 @@ if [ "$NOTARIZE" = true ]; then
     echo -e "${YELLOW}Waiting for Apple notarization service...${NC}"
 
     WAIT_OUTPUT=$(xcrun notarytool wait "${SUBMISSION_ID}" \
-        "${NOTARIZE_AUTH_ARGS[@]}" 2>&1)
+        "${NOTARIZE_AUTH_ARGS[@]}" 2>&1) || true
     echo "${WAIT_OUTPUT}"
 
     NOTARIZE_STATUS=$(echo "${WAIT_OUTPUT}" | grep "  status:" | awk '{print $2}')

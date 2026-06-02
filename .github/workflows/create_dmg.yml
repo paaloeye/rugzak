@@ -8,6 +8,9 @@ on:
       - "v*"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-dmg:
     name: Build and Create DMG
@@ -60,7 +63,8 @@ jobs:
           security import "${RUNNER_TEMP}/certificate.p12" \
             -k "${KEYCHAIN_PATH}" \
             -P "${SIGNING_CERTIFICATE_PASSWORD}" \
-            -T /usr/bin/codesign
+            -T /usr/bin/codesign \
+            > /dev/null
           security list-keychain -d user -s "${KEYCHAIN_PATH}"
           security set-key-partition-list \
             -S apple-tool:,apple:,codesign: \
