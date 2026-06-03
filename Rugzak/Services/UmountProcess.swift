@@ -22,18 +22,27 @@ enum UmountError: LocalizedError {
 }
 
 struct UmountProcess {
-    nonisolated static func unmount(mountPoint: URL) async throws {
+    nonisolated static func unmount(mountPoint: URL, force: Bool = false) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             DispatchQueue.global(qos: .userInitiated).async {
                 do {
                     let process = Process()
                     process.executableURL = URL(fileURLWithPath: "/sbin/umount")
-                    process.arguments = [mountPoint.path]
+                    process.arguments = []
+
+                    if force {
+                        process.arguments!.append("-f")
+                    }
+
+                    process.arguments!.append(mountPoint.path)
+
                     let errorPipe = Pipe()
                     process.standardError = errorPipe
                     process.standardOutput = Pipe()
+
                     try process.run()
                     process.waitUntilExit()
+
                     guard process.terminationStatus == 0 else {
                         let errData = errorPipe.fileHandleForReading.readDataToEndOfFile()
                         let errMsg = String(data: errData, encoding: .utf8) ?? ""

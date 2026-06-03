@@ -15,10 +15,19 @@ struct RowFontSizeKey: EnvironmentKey {
     static let defaultValue: Double = 14
 }
 
+struct OptionHeldKey: EnvironmentKey {
+    static let defaultValue: Bool = false
+}
+
 extension EnvironmentValues {
     var rowFontSize: Double {
         get { self[RowFontSizeKey.self] }
         set { self[RowFontSizeKey.self] = newValue }
+    }
+
+    var isOptionHeld: Bool {
+        get { self[OptionHeldKey.self] }
+        set { self[OptionHeldKey.self] = newValue }
     }
 }
 
@@ -32,6 +41,8 @@ struct ContentView: View {
     @AppStorage("rowFontSize") private var fontSize: Double = RowFontSizeKey.defaultValue
 
     @State private var dropState: DropState
+    @State private var isOptionHeld: Bool = false
+    @State private var eventMonitor: Any?
 
     init(dropState: DropState = .idle) {
         _dropState = State(initialValue: dropState)
@@ -60,6 +71,19 @@ struct ContentView: View {
         }
         .frame(minWidth: 480, minHeight: 320)
         .environment(\.rowFontSize, fontSize)
+        .environment(\.isOptionHeld, isOptionHeld)
+        .onAppear {
+            eventMonitor = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { event in
+                self.isOptionHeld = event.modifierFlags.contains(.option)
+                return event
+            }
+        }
+        .onDisappear {
+            if let monitor = eventMonitor {
+                NSEvent.removeMonitor(monitor)
+                eventMonitor = nil
+            }
+        }
         .toolbar {
             ToolbarItem(placement: .automatic) {
                 Button {
@@ -119,8 +143,9 @@ private struct MountRow: View {
 
     @Environment(ArchiveManager.self) private var archiveManager: ArchiveManager
     @Environment(\.rowFontSize) private var fontSize
+    @Environment(\.isOptionHeld) private var isOptionHeld
 
-    @State private var showingUnmountConfirm = false
+    @State private var showingUnmountConfirm: Bool = false
 
     var body: some View {
         HStack(spacing: 12) {
@@ -173,13 +198,17 @@ private struct MountRow: View {
             isPresented: $showingUnmountConfirm,
             titleVisibility: .visible
         ) {
-            Button("Unmount", role: .destructive) {
-                archiveManager.unmount(archive)
+            Button(unmountTitle, role: .destructive) {
+                archiveManager.unmount(archive, force: isOptionHeld)
             }
             Button("Cancel", role: .cancel) {}
         } message: {
             Text(archive.mountPoint.path)
         }
+    }
+
+    var unmountTitle: String {
+        isOptionHeld == true ? "Force unmount" : "Unmount"
     }
 }
 

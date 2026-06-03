@@ -87,10 +87,10 @@ final class ArchiveManager {
         }
     }
 
-    func unmount(_ archive: MountedArchive) {
+    func unmount(_ archive: MountedArchive, force: Bool = false) {
         Task {
             do {
-                try await UmountProcess.unmount(mountPoint: archive.mountPoint)
+                try await UmountProcess.unmount(mountPoint: archive.mountPoint, force: force)
                 mounts.removeAll { $0.id == archive.id }
                 errorMessage = nil
             } catch {
