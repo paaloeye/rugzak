@@ -108,6 +108,7 @@
 			buildConfigurationList = 8A0380CE2FB70F2700814CD3 /* Build configuration list for PBXNativeTarget "Rugzak" */;
 			buildPhases = (
 				F873B2B82F6F42A391E17D9E /* Generate Build Info */,
+				8A0F143A2FD0892B00FD0F8A /* Export icons */,
 				8A1B2C021A2B3C4D5E6F7A8B /* Build fuse-archive */,
 				8A0380BD2FB70F2600814CD3 /* Sources */,
 				8A0380BE2FB70F2600814CD3 /* Frameworks */,
@@ -175,6 +176,29 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		8A0F143A2FD0892B00FD0F8A /* Export icons */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/scripts/export_icons.sh",
+				"$(SRCROOT)/Resources/RugzakAppIcon.icon",
+				"$(SRCROOT)/Resources/RugzakAppIconDebug.icon",
+			);
+			name = "Export icons";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(SRCROOT)/Resources/Assets.xcassets/Rugzak.appiconset/Contents.json",
+				"$(SRCROOT)/Resources/Assets.xcassets/RugzakDebug.appiconset/Contents.json",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "bash \"${SRCROOT}/scripts/export_icons.sh\"\n";
+		};
 		8A1B2C021A2B3C4D5E6F7A8B /* Build fuse-archive */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
