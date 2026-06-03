@@ -2,14 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2026 Paal Øye-Strømme. All rights reserved.</string>
-	<key>GitBuildStatus</key>
-	<string>$(GIT_BUILD_STATUS)</string>
-	<key>GitCommitHash</key>
-	<string>$(GIT_COMMIT_HASH)</string>
-	<key>GitCommitHashLong</key>
-	<string>$(GIT_COMMIT_HASH_LONG)</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -258,7 +250,11 @@
 			</array>
 		</dict>
 	</array>
-	<key>NSAppleEventsUsageDescription</key>
-	<string>Rugzak needs to send Apple Events to open a terminal tab at the mounted archive's path.</string>
+	<key>GitBuildStatus</key>
+	<string>$(GIT_BUILD_STATUS)</string>
+	<key>GitCommitHash</key>
+	<string>$(GIT_COMMIT_HASH)</string>
+	<key>GitCommitHashLong</key>
+	<string>$(GIT_COMMIT_HASH_LONG)</string>
 </dict>
 </plist>
