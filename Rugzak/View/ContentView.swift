@@ -142,6 +142,7 @@ private struct MountRow: View {
     let archive: MountedArchive
 
     @Environment(ArchiveManager.self) private var archiveManager: ArchiveManager
+    @Environment(TerminalManager.self) private var terminalManager: TerminalManager
     @Environment(\.rowFontSize) private var fontSize
     @Environment(\.isOptionHeld) private var isOptionHeld
 
@@ -169,18 +170,22 @@ private struct MountRow: View {
             Button {
                 archiveManager.openInFinder(archive)
             } label: {
-                Image(systemName: "folder")
+                Image(nsImage: .finderAppIcon)
+                    .resizable()
+                    .frame(width: 32, height: 32)
             }
             .buttonStyle(.borderless)
             .help("Open in Finder")
 
             Button {
-                archiveManager.openInTerminal(archive)
+                terminalManager.open(terminalManager.lastUsed, at: archive.mountPoint)
             } label: {
-                Image(systemName: "terminal")
+                Image(nsImage: terminalManager.icon(for: terminalManager.lastUsed))
+                    .resizable()
+                    .frame(width: 32, height: 32)
             }
             .buttonStyle(.borderless)
-            .help("Open in Terminal")
+            .help("Open in \(terminalManager.lastUsed.displayName)")
 
             Button("Unmount") {
                 showingUnmountConfirm = true
@@ -190,6 +195,30 @@ private struct MountRow: View {
         }
         .padding(.vertical, 4)
         .contentShape(Rectangle())
+        .contextMenu {
+            ForEach(Terminal.allCases) { terminal in
+                Button {
+                    terminalManager.open(terminal, at: archive.mountPoint)
+                } label: {
+                    Label {
+                        Text("Open in \(terminal.displayName)")
+                    } icon: {
+                        Image(nsImage: terminalManager.icon(for: terminal))
+                    }
+                }
+                .disabled(!terminalManager.isAvailable(terminal))
+            }
+            Divider()
+            Button {
+                archiveManager.openInFinder(archive)
+            } label: {
+                Label {
+                    Text("Open in Finder")
+                } icon: {
+                    Image(nsImage: .finderAppIcon)
+                }
+            }
+        }
         .onTapGesture(count: 2) {
             archiveManager.openInFinder(archive)
         }
@@ -212,6 +241,14 @@ private struct MountRow: View {
     }
 }
 
+extension NSImage {
+    fileprivate static let finderAppIcon: NSImage =
+        NSWorkspace.shared
+        .urlForApplication(withBundleIdentifier: "com.apple.finder")
+        .map { NSWorkspace.shared.icon(forFile: $0.path) }
+        ?? NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
+}
+
 // MARK: - Preview
 
 #if DEBUG
@@ -224,6 +261,7 @@ private struct MountRow: View {
     #Preview("With mounts") {
         ContentView()
             .environment(ArchiveManager.previewWithMounts())
+            .environment(TerminalManager.preview())
     }
 
     #Preview("With error") {
@@ -247,6 +285,7 @@ private struct MountRow: View {
     #Preview("Drop targeted — already mounted") {
         ContentView(dropState: .alreadyMounted)
             .environment(ArchiveManager.previewWithMounts())
+            .environment(TerminalManager.preview())
     }
 
     // MARK - README
@@ -254,12 +293,14 @@ private struct MountRow: View {
     #Preview("Rugzak") {
         ContentView()
             .environment(ArchiveManager.previewWithMounts())
+            .environment(TerminalManager.preview())
             .preferredColorScheme(.light)
     }
 
     #Preview("Rugzak") {
         ContentView()
             .environment(ArchiveManager.previewWithMounts())
+            .environment(TerminalManager.preview())
             .preferredColorScheme(.dark)
     }
 

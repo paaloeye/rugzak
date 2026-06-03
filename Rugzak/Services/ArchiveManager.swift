@@ -104,26 +104,7 @@ final class ArchiveManager {
     }
 
     func openInTerminal(_ archive: MountedArchive) {
-        let pb = NSPasteboard(name: NSPasteboard.Name(Bundle.main.bundleIdentifier!))
-        pb.clearContents()
-        pb.writeObjects([archive.mountPoint as NSURL])
-
-        logger.debug("Opening \(archive.mountPoint.path) in Ghostty")
-
-        // NB: With currently released Ghostty (1.3.1) PWD ends up with a trailing slash which might or might not trip fish/nu etc.
-        // TODO: Ghostty -> open via AppleScript, GhosttyDebug -> open via App Intents, Terminal -> App Intents
-        // Ref:
-        //  - https://github.com/fish-shell/fish-shell/issues/11821#issuecomment-3341478192
-        //  - https://github.com/ghostty-org/ghostty/pull/8784/changes#diff-b681adf92f7b29e67157058b740ea5e4d0f0b0aa2ba3a29563dea2244bb1a6cd
-        //  - https://github.com/ghostty-org/ghostty/discussions/8741
-        if NSPerformService("New Ghostty[DEBUG] Tab Here", pb) { return }
-
-        // Terminal fallback
-        let path = archive.mountPoint.path.replacingOccurrences(of: "'", with: "\\'")
-        let src = "tell application \"Terminal\" to activate\ntell application \"Terminal\" to do script \"cd '\(path)'\""
-
-        logger.debug("Opening \(archive.mountPoint.path) in Terminal")
-        NSAppleScript(source: src)?.executeAndReturnError(nil)
+        TerminalManager.shared.open(TerminalManager.shared.lastUsed, at: archive.mountPoint)
     }
 
     func reconcile() {

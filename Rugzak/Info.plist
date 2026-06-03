@@ -258,7 +258,7 @@
 			</array>
 		</dict>
 	</array>
-	<key>NSRequiresAquaSystemAppearance</key>
-	<false/>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>Rugzak needs to send Apple Events to open a terminal tab at the mounted archive's path.</string>
 </dict>
 </plist>

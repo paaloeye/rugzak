@@ -18,6 +18,7 @@ struct RugzakApp: App {
         Window("Rugzak", id: "main") {
             ContentView()
                 .environment(ArchiveManager.shared)
+                .environment(TerminalManager.shared)
         }
         .windowResizability(.contentSize)
         .commands {
