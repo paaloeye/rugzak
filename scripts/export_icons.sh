@@ -20,6 +20,12 @@ if [[ ! -x "$ICTOOL" ]]; then
     exit 0
 fi
 
+# ictool segfaults on Xcode versions below 26.5 (XCODE_VERSION_ACTUAL < 2650)
+if [[ -n "${XCODE_VERSION_ACTUAL:-}" && "${XCODE_VERSION_ACTUAL}" -lt 2650 ]]; then
+    echo "ictool skipped — Xcode ${XCODE_VERSION_ACTUAL} < 2650; pre-exported PNGs are used as-is"
+    exit 0
+fi
+
 build_icns() {
     local icon="$1"
     local appiconset="$2"
