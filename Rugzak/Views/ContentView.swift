@@ -26,10 +26,12 @@ private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: 
 
 @MainActor
 struct ContentView: View {
-    @EnvironmentObject var manager: ArchiveManager
+    @Environment(ArchiveManager.self) private var manager: ArchiveManager
     @Environment(\.openWindow) private var openWindow
-    @State private var dropState: DropState
+
     @AppStorage("rowFontSize") private var fontSize: Double = RowFontSizeKey.defaultValue
+
+    @State private var dropState: DropState
 
     init(dropState: DropState = .idle) {
         _dropState = State(initialValue: dropState)
@@ -73,18 +75,11 @@ struct ContentView: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "archivebox")
-                .font(.system(size: 48))
-                .foregroundStyle(.secondary)
-            Text("Drop an archive here or on the Dock icon")
-                .font(.title3)
-                .foregroundStyle(.secondary)
-            Text("Supported: zip, tar, tar.gz, tar.bz2, tar.xz, ipsw, xip")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
+        ContentUnavailableView {
+            Label("No Archives Mounted", systemImage: "archivebox")
+        } description: {
+            Text("Drop an archive here or on the Dock icon.\nSupported: zip, tar, tar.gz, tar.bz2, tar.xz, ipsw, xip")
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var mountList: some View {
@@ -121,8 +116,10 @@ struct ContentView: View {
 @MainActor
 private struct MountRow: View {
     let archive: MountedArchive
-    @EnvironmentObject var manager: ArchiveManager
+
+    @Environment(ArchiveManager.self) private var archiveManager: ArchiveManager
     @Environment(\.rowFontSize) private var fontSize
+
     @State private var showingUnmountConfirm = false
 
     var body: some View {
@@ -145,7 +142,7 @@ private struct MountRow: View {
             Spacer()
 
             Button {
-                manager.openInFinder(archive)
+                archiveManager.openInFinder(archive)
             } label: {
                 Image(systemName: "folder")
             }
@@ -153,7 +150,7 @@ private struct MountRow: View {
             .help("Open in Finder")
 
             Button {
-                manager.openInTerminal(archive)
+                archiveManager.openInTerminal(archive)
             } label: {
                 Image(systemName: "terminal")
             }
@@ -169,7 +166,7 @@ private struct MountRow: View {
         .padding(.vertical, 4)
         .contentShape(Rectangle())
         .onTapGesture(count: 2) {
-            manager.openInFinder(archive)
+            archiveManager.openInFinder(archive)
         }
         .confirmationDialog(
             "Unmount \(archive.archivePath.lastPathComponent)?",
@@ -177,7 +174,7 @@ private struct MountRow: View {
             titleVisibility: .visible
         ) {
             Button("Unmount", role: .destructive) {
-                manager.unmount(archive)
+                archiveManager.unmount(archive)
             }
             Button("Cancel", role: .cancel) {}
         } message: {
@@ -192,17 +189,17 @@ private struct MountRow: View {
 
     #Preview("Empty state") {
         ContentView()
-            .environmentObject(ArchiveManager.preview())
+            .environment(ArchiveManager.preview())
     }
 
     #Preview("With mounts") {
         ContentView()
-            .environmentObject(ArchiveManager.previewWithMounts())
+            .environment(ArchiveManager.previewWithMounts())
     }
 
     #Preview("With error") {
         ContentView()
-            .environmentObject(
+            .environment(
                 ArchiveManager.preview(
                     error: "fuse-archive not found. Install it with: brew install fuse-archive"
                 ))
@@ -210,30 +207,30 @@ private struct MountRow: View {
 
     #Preview("Drop targeted — accepting") {
         ContentView(dropState: .accepting)
-            .environmentObject(ArchiveManager.preview())
+            .environment(ArchiveManager.preview())
     }
 
     #Preview("Drop targeted — rejecting") {
         ContentView(dropState: .rejecting)
-            .environmentObject(ArchiveManager.preview())
+            .environment(ArchiveManager.preview())
     }
 
     #Preview("Drop targeted — already mounted") {
         ContentView(dropState: .alreadyMounted)
-            .environmentObject(ArchiveManager.previewWithMounts())
+            .environment(ArchiveManager.previewWithMounts())
     }
 
     // MARK - README
 
     #Preview("Rugzak") {
         ContentView()
-            .environmentObject(ArchiveManager.previewWithMounts())
+            .environment(ArchiveManager.previewWithMounts())
             .preferredColorScheme(.light)
     }
 
     #Preview("Rugzak") {
         ContentView()
-            .environmentObject(ArchiveManager.previewWithMounts())
+            .environment(ArchiveManager.previewWithMounts())
             .preferredColorScheme(.dark)
     }
 

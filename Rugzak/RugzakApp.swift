@@ -17,7 +17,7 @@ struct RugzakApp: App {
     var body: some Scene {
         Window("Rugzak", id: "main") {
             ContentView()
-                .environmentObject(ArchiveManager.shared)
+                .environment(ArchiveManager.shared)
         }
         .windowResizability(.contentSize)
         .commands {

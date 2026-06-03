@@ -11,8 +11,6 @@ This file provides guidance to Claude when it keeps making the same mistakes.
 
 The project uses `PBXFileSystemSynchronizedRootGroup` (Xcode 16+). New `.swift` files dropped into
 `Rugzak/` are picked up **automatically** — no need to add them to `project.pbxproj` manually.
-Use `XcodeWrite` (MCP) when creating new files so they are tracked on the Xcode side, but native
-filesystem writes (`Write` tool) are preferred for edits because they produce visible diffs.
 
 ## fuse-archive Binary
 

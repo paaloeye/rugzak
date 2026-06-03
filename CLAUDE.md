@@ -21,12 +21,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 - PREFER native file system update over `XcodeUpdate` MCP tools because:
   - it's easier to see what's changed, MCP tools don't show diffs
   - **auto-accept** doesn't work with MCP tools
-  - `XcodeWrite` can be used for creating new files only, so they are tracked by Xcode
 - ALWAYS make sure `BuildProject` is _green_ and `XcodeRefreshCodeIssuesInFile` is at least _yellow_ before reporting _ready_
 - USE `RenderPreview` to render actual state and test your assumptions when working with UI and UX elements
-- ALWAYS re-render and update `docs/screenshots/screenshot_light.png` and `docs/screenshots/screenshot_dark.png` before committing
-  when either the README `#Preview("Rugzak")` macros in `ContentView.swift` or
-  `ArchiveManager.previewWithMounts()` are changed — use `RenderPreview`
+- `MACOS_DEPLOYMENT_TARGET=14.6`
 
 ## A Tour of Banners
 
@@ -54,7 +51,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 ## Xcode MCP Tools
 
-Flight Engineer uses Xcode MCP for project integration. Available tools organised by category:
+**Rugzak** uses Xcode MCP for project integration. Available tools organised by category:
 
 > [!WARNING]
 > Xcode MCP tools cannot directly rename schemes or targets. This requires manual intervention in Xcode.

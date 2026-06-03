@@ -9,13 +9,13 @@
 //
 
 import AppKit
-import Combine
 import DiskArbitration
 import Foundation
 import os.log
 
 @MainActor
-final class ArchiveManager: ObservableObject {
+@Observable
+final class ArchiveManager {
 
     private let logger = Logger(
         subsystem: Bundle.main.bundleIdentifier!,
@@ -31,8 +31,8 @@ final class ArchiveManager: ObservableObject {
         return ArchiveManager()
     }()
 
-    @Published private(set) var mounts: [MountedArchive] = []
-    @Published var errorMessage: String?
+    private(set) var mounts: [MountedArchive] = []
+    var errorMessage: String?
 
     let mountsDirectory: URL = {
         let home = FileManager.default.homeDirectoryForCurrentUser
