@@ -195,30 +195,6 @@ private struct MountRow: View {
         }
         .padding(.vertical, 4)
         .contentShape(Rectangle())
-        .contextMenu {
-            ForEach(Terminal.allCases) { terminal in
-                Button {
-                    terminalManager.open(terminal, at: archive.mountPoint)
-                } label: {
-                    Label {
-                        Text("Open in \(terminal.displayName)")
-                    } icon: {
-                        Image(nsImage: terminalManager.icon(for: terminal))
-                    }
-                }
-                .disabled(!terminalManager.isAvailable(terminal))
-            }
-            Divider()
-            Button {
-                archiveManager.openInFinder(archive)
-            } label: {
-                Label {
-                    Text("Open in Finder")
-                } icon: {
-                    Image(nsImage: .finderAppIcon)
-                }
-            }
-        }
         .onTapGesture(count: 2) {
             archiveManager.openInFinder(archive)
         }
@@ -233,6 +209,22 @@ private struct MountRow: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text(archive.mountPoint.path)
+        }
+        .liveContextMenu {
+            for terminal in Terminal.allCases {
+                LiveMenuItem.button(
+                    "Open in \(terminal.displayName)",
+                    image: terminalManager.icon(for: terminal),
+                    isEnabled: terminalManager.isAvailable(terminal),
+                    isDebug: terminal.isDebug
+                ) {
+                    terminalManager.open(terminal, at: archive.mountPoint)
+                }
+            }
+            LiveMenuItem.divider
+            LiveMenuItem.button("Open in Finder", image: .finderAppIcon) {
+                archiveManager.openInFinder(archive)
+            }
         }
     }
 

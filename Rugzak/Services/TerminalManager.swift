@@ -34,6 +34,8 @@ enum Terminal: String, CaseIterable, Identifiable {
         case .appleTerminal: "com.apple.Terminal"
         }
     }
+
+    var isDebug: Bool { self == .ghosttyDebug }
 }
 
 @MainActor
