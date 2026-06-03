@@ -12,8 +12,13 @@
 
 set -euo pipefail
 
-ICTOOL="/Applications/Xcode.app/Contents/Applications/Icon Composer.app/Contents/Executables/ictool"
+ICTOOL="${DEVELOPER_DIR%/Developer}/Applications/Icon Composer.app/Contents/Executables/ictool"
 RESOURCES="${SRCROOT}/Resources"
+
+if [[ ! -x "$ICTOOL" ]]; then
+    echo "ictool not found or not executable — skipping icon export (pre-exported PNGs are used as-is)"
+    exit 0
+fi
 
 build_icns() {
     local icon="$1"
