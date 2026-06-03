@@ -99,8 +99,12 @@ else
     GREP_FILTER="grep -E '(error|warning|Build Succeeded|Build Failed|\*\* BUILD)' || true"
 fi
 
+BUILD_LOG="${PROJECT_ROOT}/.tmp/build_${BUILD_CONFIG}.log"
+mkdir -p "${PROJECT_ROOT}/.tmp"
+
 echo -e "${YELLOW}Building (${BUILD_CONFIG})...${NC}"
 
+set +e
 if [ "$DEV_SIGN" = true ]; then
     echo "  Code signing with: Apple Development"
     xcodebuild \
@@ -114,7 +118,7 @@ if [ "$DEV_SIGN" = true ]; then
         ONLY_ACTIVE_ARCH=NO \
         CODE_SIGN_IDENTITY="Apple Development" \
         CODE_SIGNING_REQUIRED=YES \
-        | eval "$GREP_FILTER"
+        2>&1 | tee "${BUILD_LOG}" | eval "$GREP_FILTER"
 else
     xcodebuild \
         -project "${XCODE_PROJECT}" \
@@ -128,13 +132,16 @@ else
         CODE_SIGN_IDENTITY="-" \
         CODE_SIGNING_REQUIRED=NO \
         CODE_SIGNING_ALLOWED=NO \
-        | eval "$GREP_FILTER"
+        2>&1 | tee "${BUILD_LOG}" | eval "$GREP_FILTER"
 fi
-
 BUILD_STATUS=${PIPESTATUS[0]}
+set -e
 
 if [ $BUILD_STATUS -ne 0 ]; then
-    echo -e "${RED}✗ build failed${NC}"
+    echo -e "${RED}✗ Build failed (exit code ${BUILD_STATUS})${NC}"
+    echo ""
+    echo -e "${RED}=== Full build log ===${NC}"
+    cat "${BUILD_LOG}"
     exit 1
 fi
 

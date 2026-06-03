@@ -33,7 +33,7 @@ DMG_DIR="${PROJECT_ROOT}/.dist"
 # Get version from Info.plist (will be built first, so we check after build)
 APP_NAME="Rugzak"           # Xcode scheme/target name
 APP_DISPLAY_NAME="Rugzak"   # Human-readable display name
-DMG_NAME="Rugzak"  # DMG file prefix
+DMG_NAME="Rugzak"           # DMG file prefix
 
 # Parse arguments
 CLEAN=false
