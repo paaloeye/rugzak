@@ -4,7 +4,6 @@
 #  Copyright (c) 2026 Paal Øye-Strømme
 #
 #  create_dmg.sh
-#  Rukzak
 #
 # Build and create DMG distribution:
 #
@@ -22,20 +21,9 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Colour
 
-# Configuration
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-XCODE_PROJECT="${PROJECT_ROOT}/Rugzak.xcodeproj"
-BUILD_CONFIG="Release"
-DERIVED_DATA="${PROJECT_ROOT}/.tmp/DerivedData"
-DIST_DIR="${PROJECT_ROOT}/.tmp/dist"
-DMG_DIR="${PROJECT_ROOT}/.dist"
-
-# Get version from Info.plist (will be built first, so we check after build)
-APP_NAME="Rugzak"           # Xcode scheme/target name
-APP_DISPLAY_NAME="Rugzak"   # Human-readable display name
-DMG_NAME="Rugzak"           # DMG file prefix
-
 # Parse arguments
+SCHEME=""
+PROJECT=""
 CLEAN=false
 SIGN=false
 DEV_SIGN=false
@@ -52,6 +40,10 @@ API_ISSUER=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
+        --project)
+            PROJECT="$2"
+            shift 2
+            ;;
         --clean)
             CLEAN=true
             shift
@@ -99,10 +91,15 @@ while [[ $# -gt 0 ]]; do
             VERBOSE=true
             shift
             ;;
+
         --help|-h)
-            echo "Usage: $0 [OPTIONS]"
+            echo "Usage: $0 SCHEME [OPTIONS]"
+            echo ""
+            echo "Arguments:"
+            echo "  SCHEME                     Xcode scheme to build (required)"
             echo ""
             echo "Options:"
+            echo "  --project PROJECT          Xcode project name (default: same as SCHEME)"
             echo "  --clean                    Clean build (remove derived data)"
             echo "  --dev-sign                 Sign with Apple Development"
             echo "  --sign IDENTITY            Code sign with specified identity (e.g., 'Developer ID Application')"
@@ -117,31 +114,56 @@ while [[ $# -gt 0 ]]; do
             echo "  --help,-h                  Show this help message"
             echo ""
             echo "Examples:"
-            echo "  $0                                    # Basic DMG creation (unsigned)"
-            echo "  $0 --dev-sign                         # Development signed"
-            echo "  $0 --sign \"Developer ID Application: Name\" # Distribution signed DMG"
-            echo "  $0 --sign \"Developer ID Application: Name\" --notarize TEAM_ID --keychain-profile AC_PASSWORD"
-            echo "  $0 --sign \"Developer ID Application: Name\" --notarize TEAM_ID --apple-id you@example.com --password @keychain:AC_PASSWORD"
+            echo "  $0 SCHEME                                           # Basic DMG creation (unsigned)"
+            echo "  $0 SCHEME --dev-sign                                # Development signed"
+            echo "  $0 SCHEME --sign \"Developer ID Application: Name\" # Distribution signed DMG"
+            echo "  $0 SCHEME --sign \"Developer ID Application: Name\" --notarize TEAM_ID --keychain-profile AC_PASSWORD"
+            echo "  $0 SCHEME --sign \"Developer ID Application: Name\" --notarize TEAM_ID --apple-id you@example.com --password @keychain:AC_PASSWORD"
             echo ""
             echo "Store credentials in Keychain (one-time setup):"
             echo "  xcrun notarytool store-credentials AC_PASSWORD --apple-id you@example.com --team-id TEAM_ID"
             exit 0
             ;;
-        *)
+        -*)
             echo -e "${RED}Error: Unknown option $1${NC}"
             echo "Use --help for usage information"
             exit 1
             ;;
+
+        *)
+            if [[ -z "$SCHEME" ]]; then
+                SCHEME="$1"
+            else
+                echo -e "${RED}Error: Unexpected argument '$1'${NC}"
+                echo "Use --help for usage information"
+                exit 1
+            fi
+            shift
+            ;;
+
     esac
 done
 
+if [[ -z "$SCHEME" ]]; then
+    echo -e "${RED}Error: SCHEME is required${NC}"
+    echo "Use --help for usage information"
+    exit 1
+fi
+
+PROJECT="${PROJECT:-$SCHEME}"
+
+# Configuration
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+XCODE_PROJECT="${PROJECT_ROOT}/${PROJECT}.xcodeproj"
+BUILD_CONFIG="Release"
+DERIVED_DATA="${PROJECT_ROOT}/.tmp/DerivedData"
+DIST_DIR="${PROJECT_ROOT}/.tmp/dist"
+DMG_DIR="${PROJECT_ROOT}/.dist"
+
 echo "=================================================="
-echo "  Rugzak DMG Creator"
+echo "  ${SCHEME} DMG Creator"
 echo "=================================================="
 echo ""
-
-# Ensure vendored dependencies are present before building
-bash "${PROJECT_ROOT}/scripts/vendor_init.sh"
 
 # Create output directories
 mkdir -p "${DIST_DIR}"
@@ -151,13 +173,12 @@ mkdir -p "${DMG_DIR}"
 if [ "$VERBOSE" = true ]; then
     GREP_FILTER="cat"
 else
-    GREP_FILTER="grep -E '(error|warning|Build Succeeded|Build Failed|\*\* BUILD)' || true"
+    GREP_FILTER="grep -E '(error:|warning:|Build Succeeded|Build Failed|\*\* BUILD)' || true"
 fi
 
 cd "${PROJECT_ROOT}"
 
-# Build  app
-echo -e "${YELLOW}Building ${APP_NAME}.app (${BUILD_CONFIG})...${NC}"
+echo -e "${YELLOW}Building ${SCHEME} (${BUILD_CONFIG})...${NC}"
 
 if [ "$SIGN" = true ]; then
     echo "  Code signing with: ${SIGNING_IDENTITY}"
@@ -167,7 +188,7 @@ if [ "$SIGN" = true ]; then
     echo ""
     xcodebuild \
         -project "${XCODE_PROJECT}" \
-        -scheme "${APP_NAME}" \
+        -scheme "${SCHEME}" \
         -configuration "${BUILD_CONFIG}" \
         -derivedDataPath "${DERIVED_DATA}" \
         -destination "generic/platform=macOS" \
@@ -184,7 +205,7 @@ elif [ "$DEV_SIGN" = true ]; then
     echo "  Code signing: automatic (Apple Development)"
     xcodebuild \
         -project "${XCODE_PROJECT}" \
-        -scheme "${APP_NAME}" \
+        -scheme "${SCHEME}" \
         -configuration "${BUILD_CONFIG}" \
         -derivedDataPath "${DERIVED_DATA}" \
         -destination "generic/platform=macOS" \
@@ -196,7 +217,7 @@ elif [ "$DEV_SIGN" = true ]; then
 else
     xcodebuild \
         -project "${XCODE_PROJECT}" \
-        -scheme "${APP_NAME}" \
+        -scheme "${SCHEME}" \
         -configuration "${BUILD_CONFIG}" \
         -derivedDataPath "${DERIVED_DATA}" \
         -destination "generic/platform=macOS" \
@@ -211,21 +232,21 @@ fi
 BUILD_STATUS=${PIPESTATUS[0]}
 
 if [ $BUILD_STATUS -ne 0 ]; then
-    echo -e "${RED}✗ ${APP_NAME}.app build failed${NC}"
+    echo -e "${RED}✗ ${SCHEME} build failed${NC}"
     echo ""
     echo -e "${YELLOW}Available signing identities:${NC}"
     security find-identity -v -p codesigning
     exit 1
 fi
 
-APP_PATH="${DERIVED_DATA}/Build/Products/${BUILD_CONFIG}/${APP_NAME}.app"
+APP_PATH="${DERIVED_DATA}/Build/Products/${BUILD_CONFIG}/${SCHEME}.app"
 
 if [ ! -d "${APP_PATH}" ]; then
-    echo -e "${RED}✗ ${APP_NAME}.app not found in build products${NC}"
+    echo -e "${RED}✗ ${SCHEME}.app not found in ${APP_PATH}${NC}"
     exit 1
 fi
 
-echo -e "${GREEN}✓ ${APP_NAME}.app built successfully${NC}"
+echo -e "${GREEN}✓ ${SCHEME}.app built successfully${NC}"
 echo ""
 
 # Extract version information
@@ -242,7 +263,7 @@ echo "  Git build status: ${GIT_BUILD_STATUS_FROM_PLIST}"
 echo ""
 
 # Build DMG name with git information
-DMG_NAME="${APP_NAME}-${VERSION}-${GIT_COMMIT_FROM_PLIST}"
+DMG_NAME="${SCHEME}-${VERSION}-${GIT_COMMIT_FROM_PLIST}"
 if [ "${GIT_BUILD_STATUS_FROM_PLIST}" = "dirty" ]; then
     DMG_NAME="${DMG_NAME}-dirty"
 fi
@@ -274,23 +295,33 @@ rm -f "${FINAL_DMG}"
 
 # Create temporary DMG
 hdiutil create \
-    -volname "${APP_DISPLAY_NAME}" \
+    -volname "${SCHEME}" \
     -srcfolder "${STAGING_DIR}" \
     -ov \
     -format UDRW \
     "${TEMP_DMG}"
 
-# Mount the DMG to set custom attributes
-MOUNT_DIR="${DIST_DIR}/mount"
-mkdir -p "${MOUNT_DIR}"
+# Mount via standard DiskArbitration (lets Finder see the disk; no custom mountpoint, no root needed)
+MOUNT_DIR=$(hdiutil attach "${TEMP_DMG}" | awk '/\/Volumes\// {print $NF}')
 
-hdiutil attach "${TEMP_DMG}" -mountpoint "${MOUNT_DIR}" -nobrowse
-
-# Set custom icon positions and window size using AppleScript
+# Wait until Finder has registered the disk, then set icon layout — single session avoids inter-call races
 osascript <<EOF || true
 tell application "Finder"
-    tell disk "${APP_DISPLAY_NAME}"
+    -- -- wait is probably optional but might be handy in CI
+    -- set waited to 0
+    -- repeat
+    --     try
+    --         set d to disk "${SCHEME}"
+    --         exit repeat
+    --     on error
+    --         delay 0.5
+    --         set waited to waited + 0.5
+    --         if waited > 30 then error "Timed out waiting for disk '${SCHEME}' to appear in Finder"
+    --     end try
+    -- end repeat
+    tell disk "${SCHEME}"
         open
+        delay 1
         set current view of container window to icon view
         set toolbar visible of container window to false
         set statusbar visible of container window to false
@@ -298,12 +329,12 @@ tell application "Finder"
         set viewOptions to the icon view options of container window
         set arrangement of viewOptions to not arranged
         set icon size of viewOptions to 128
-        set position of item "${APP_NAME}.app" of container window to {125, 225}
+        set position of item "${SCHEME}.app" of container window to {125, 225}
         set position of item "Applications" of container window to {375, 225}
         close
         open
         update without registering applications
-        delay 2
+        delay 1
     end tell
 end tell
 EOF
@@ -320,7 +351,6 @@ hdiutil convert "${TEMP_DMG}" \
 # Clean up
 rm -f "${TEMP_DMG}"
 rm -rf "${STAGING_DIR}"
-rm -rf "${MOUNT_DIR}"
 
 echo -e "${GREEN}✓ DMG created${NC}"
 echo ""

@@ -4,7 +4,7 @@
 #  Copyright (c) 2026 Paal Øye-Strømme
 #
 #  generate_build_info.sh
-#  Rukzak
+#  Rugzak
 #
 #  Generates a build configuration file with Git metadata
 #

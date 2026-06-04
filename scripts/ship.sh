@@ -3,14 +3,14 @@
 #  SPDX-License-Identifier: MIT
 #  Copyright (c) 2026 Paal Øye-Strømme
 #
-#  build.sh
+#  ship.sh
 #  Rugzak
 #
-# Build Rugzak without installing in for testing and development
+# Build DMG for testing and development
 #
 
 set -euo pipefail
 
 PARENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
-exec "${PARENT_DIR}/build_scheme.sh" Rugzak "$@"
+exec "${PARENT_DIR}/create_dmg.sh" Rugzak "$@"

@@ -93,6 +93,7 @@ jobs:
           SIGNING_TEAM_ID: ${{ secrets.SIGNING_TEAM_ID }}
         run: |
           ./scripts/create_dmg.sh \
+            Rugzak \
             --sign "${SIGNING_IDENTITY}" \
             --notarize "${SIGNING_TEAM_ID}" \
             --api-key "${RUNNER_TEMP}/private_keys/AuthKey_${ASC_API_KEY_ID}.p8" \
