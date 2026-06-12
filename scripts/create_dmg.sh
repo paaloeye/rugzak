@@ -307,18 +307,18 @@ MOUNT_DIR=$(hdiutil attach "${TEMP_DMG}" | awk '/\/Volumes\// {print $NF}')
 # Wait until Finder has registered the disk, then set icon layout — single session avoids inter-call races
 osascript <<EOF || true
 tell application "Finder"
-    -- -- wait is probably optional but might be handy in CI
-    -- set waited to 0
-    -- repeat
-    --     try
-    --         set d to disk "${SCHEME}"
-    --         exit repeat
-    --     on error
-    --         delay 0.5
-    --         set waited to waited + 0.5
-    --         if waited > 30 then error "Timed out waiting for disk '${SCHEME}' to appear in Finder"
-    --     end try
-    -- end repeat
+    -- wait is probably optional but might be handy in CI
+    set waited to 0
+    repeat
+        try
+            set d to disk "${SCHEME}"
+            exit repeat
+        on error
+            delay 0.5
+            set waited to waited + 0.5
+            if waited > 30 then error "Timed out waiting for disk '${SCHEME}' to appear in Finder"
+        end try
+    end repeat
     tell disk "${SCHEME}"
         open
         delay 1
@@ -334,7 +334,8 @@ tell application "Finder"
         close
         open
         update without registering applications
-        delay 1
+        close
+        delay 3 -- make sure it's no longer in use
     end tell
 end tell
 EOF

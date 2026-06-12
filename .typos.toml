@@ -1,3 +1,6 @@
+#
+# Ref: https://github.com/crate-ci/typos/blob/master/docs/reference.md
+#
 [default]
 extend-ignore-re = [
   # typos: ignore
@@ -32,5 +35,6 @@ odf = "odf"
 
 [files]
 extend-exclude = [
-  "typos.toml"
+  "typos.toml",
+  "*.xcodeproj/**/*"
 ]

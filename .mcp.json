@@ -21,6 +21,18 @@
         "xcrun",
         "mcpbridge"
       ]
+    },
+    "flight-engineer": {
+      "type": "stdio",
+      "command": "jsonrpc-stdio-proxy",
+      "args": [
+        "--subsystem",
+        "com.paaloeye.jsonrpc.proxy",
+        "--",
+        "/usr/local/bin/ferun",
+        "mcpbridge"
+      ],
+      "env": {}
     }
   }
 }

@@ -34,4 +34,4 @@ indent_size = unset
 
 [*.swift]
 indent_style = space
-indent_size = unset
+indent_size = 4

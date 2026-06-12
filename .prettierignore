@@ -1,5 +1,16 @@
+# Xcode-generated asset catalog files
+**/Contents.json
+**/*.icon/**/icon.json
+
+# Build artifacts
+.build/
+*.xcodeproj/
+*.xcworkspace/
+
+# Dependencies
+.swiftpm/
+Packages/
+
 .editorconfig
 .gitignore
 bun.lock
-**/*.xcassets/**/Contents.json
-**/*.icon/**/icon.json
