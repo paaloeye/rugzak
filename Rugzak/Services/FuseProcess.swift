@@ -72,6 +72,10 @@ struct FuseProcess {
         throw FuseError.binaryNotFound
     }
 
+    /// Extensions whose CPIO payloads lack AppleDouble files, causing fuse-archive's
+    /// trim to collapse the top-level app bundle directory. Pass -o notrim for these.
+    private static let notrimExtensions: Set<String> = ["xip"]
+
     nonisolated static func mount(archive: URL, mountPoint: URL) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             DispatchQueue.global(qos: .userInitiated).async {
@@ -80,9 +84,15 @@ struct FuseProcess {
                     logger.info(
                         "spawning: \(binary, privacy: .public) \(archive.path, privacy: .public) \(mountPoint.path, privacy: .public)"
                     )
+                    let ext = archive.pathExtension.lowercased()
+                    var args: [String] = []
+                    if notrimExtensions.contains(ext) {
+                        args += ["-o", "notrim"]
+                    }
+                    args += [archive.path, mountPoint.path]
                     let process = Process()
                     process.executableURL = URL(fileURLWithPath: binary)
-                    process.arguments = [archive.path, mountPoint.path]
+                    process.arguments = args
                     let errorPipe = Pipe()
                     process.standardError = errorPipe
                     process.standardOutput = Pipe()
