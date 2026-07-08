@@ -1,6 +1,6 @@
-# CLAUDE.md
+# GEMINI.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working in this repository.
+This file provides guidance to Gemini (Antigravity/agy) when working in this repository.
 
 > [!WARNING]
 > These rules override default behaviour. Follow them exactly when working with this codebase. Violations may cause
@@ -77,7 +77,7 @@ BREAKING CHANGE: <description if applicable>
 
 🤖 Generated with [$(ai.nu agent get-caller-identity --key .name)]($(ai.nu agent get-caller-identity --key .url))
 
-Co-Authored-By: $(ai.nu model --key .name) <noreply@anthropic.com>
+Co-Authored-By: $(ai.nu model --key .name) <gemini-code-assist@google.com>
 Co-Authored-By: $(ai.nu agent get-caller-identity)
 Signed-Off-By: Paal Øye-Strømme <paal.o.eye@gmail.com>
 ```
@@ -120,7 +120,7 @@ refactor(hooks): change useToast
 - **We're Dutch honest**
 - British English throughout (colour, licence, behaviour, etc.)
 - No dashes in file or directory names — use underscores
-- Follow conventional commit format (see workspace CLAUDE.md for the full format)
+- Follow conventional commit format (see workspace GEMINI.md for the full format)
 
 ## Xcode MCP Tools
 

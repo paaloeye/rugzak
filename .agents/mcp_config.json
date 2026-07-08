@@ -1,0 +1,38 @@
+{
+  "mcpServers": {
+    "lldb": {
+      "command": "jsonrpc-stdio-proxy",
+      "args": [
+        "--subsystem",
+        "com.paaloeye.jsonrpc.proxy",
+        "--",
+        "/usr/bin/nc",
+        "localhost",
+        "59995"
+      ]
+    },
+    "xcode": {
+      "type": "stdio",
+      "command": "jsonrpc-stdio-proxy",
+      "args": [
+        "--subsystem",
+        "com.paaloeye.jsonrpc.proxy",
+        "--",
+        "xcrun",
+        "mcpbridge"
+      ]
+    },
+    "flight-engineer": {
+      "type": "stdio",
+      "command": "jsonrpc-stdio-proxy",
+      "args": [
+        "--subsystem",
+        "com.paaloeye.jsonrpc.proxy",
+        "--",
+        "/usr/local/bin/ferun",
+        "mcpbridge"
+      ],
+      "env": {}
+    }
+  }
+}

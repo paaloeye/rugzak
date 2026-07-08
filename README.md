@@ -16,15 +16,66 @@ Unmounting is one click away.
 | ------------------------------------ | ----------------------------- | ---------------- |
 | [macFUSE](https://osxfuse.github.io) | `brew install --cask macfuse` | Kernel extension |
 
-`fuse-archive` is **bundled** inside the app — no separate install required.
-
 > [!IMPORTANT]
 > macFUSE requires a kernel extension. After installing, go to **System Settings → Privacy &
 > Security** and allow the macFUSE system extension, then reboot.
 
+## Getting Started
+
+1. **Download** the latest `.dmg` from the [Releases page](https://github.com/paaloeye/rugzak/releases).
+2. **Install** by opening the `.dmg` and dragging **Rugzak** into your Applications folder.
+3. **Launch** the app, and drag-and-drop any archive onto it to mount instantly!
+
 ---
 
-## Getting started
+## Usage
+
+| Action                | How                                                                        |
+| --------------------- | -------------------------------------------------------------------------- |
+| Mount an archive      | Drop it onto the Dock icon or the app window                               |
+| Browse contents       | Click **Open in Finder** next to the mount                                 |
+| Open a terminal there | Click **Open in Terminal** (Ghostty preferred, falls back to Terminal.app) |
+| Unmount               | Click **Unmount** and confirm                                              |
+
+Mounts are placed under `~/Mounts/<archive-name>/`. If a name is already taken a numeric suffix is
+appended (`project_1`, `project_2`, etc).
+
+Archives mounted outside of Rugzak (e.g. via the command line) are automatically reconciled into
+the list on launch and whenever macOS reports a disk event.
+
+---
+
+## Supported formats
+
+Rugzak passes the archive directly to the bundled `fuse-archive`.
+The bundled `fuse-archive` links macOS system libraries (zlib, bzip2, iconv) plus vendored
+liblzma, libb2/BLAKE2, libzstd, and liblz4 — all compression formats are covered with no
+Homebrew runtime dependency.
+
+| Format group                                                          | Support |
+| --------------------------------------------------------------------- | :-----: |
+| `zip`, `zipx`, `jar`, `war`, `apk`, `ipa`, `epub`, `cbz`              |   ✅    |
+| `tar`, `tar.gz`, `tar.bz2`, `cpio`, `ar`, `deb`, `rpm`                |   ✅    |
+| `tar.xz`, `tar.lzma`, `xip`, `xar`                                    |   ✅    |
+| `tar.zst`                                                             |   ✅    |
+| `tar.lz4`                                                             |   ✅    |
+| `7z`, `rar`, `cab`, `iso`, `lha`, `lzh`, `warc`, `mtree`              |   ✅    |
+| `cbr`                                                                 |   ✅    |
+| RAR5 (blake2 checksums)                                               |   ✅    |
+| Compression filters `gz`, `bz2`, `z`                                  |   ✅    |
+| Compression filters `xz`, `lzma`                                      |   ✅    |
+| Compression filter `zst`                                              |   ✅    |
+| Compression filter `lz4`                                              |   ✅    |
+| Compression filters `lzo`, `br`, `lrz`, `grz`                         |   🔲    |
+| ASCII / encryption filters `base64`, `b64`, `uu`, `gpg`, `pgp`, `asc` |   ✅    |
+
+> [!NOTE]
+> Encrypted archives (password-protected zip, gpg, …) are not supported in v0.1. Full UI for
+> encrypted archives is planned for v0.2.
+
+---
+
+## Building from sources
 
 ```bash
 # 1. Clone
@@ -45,53 +96,6 @@ bash scripts/build.sh
 `generate_build_info.sh` writes `Config/GeneratedBuildInfo.xcconfig`, which Xcode needs before
 the first build phase can run. Both scripts are idempotent; after the initial bootstrap all
 build phases run automatically inside Xcode on every subsequent build.
-
----
-
-## Usage
-
-| Action                | How                                                                        |
-| --------------------- | -------------------------------------------------------------------------- |
-| Mount an archive      | Drop it onto the Dock icon or the app window                               |
-| Browse contents       | Click **Open in Finder** next to the mount                                 |
-| Open a terminal there | Click **Open in Terminal** (Ghostty preferred, falls back to Terminal.app) |
-| Unmount               | Click **Unmount** and confirm                                              |
-
-Mounts are placed under `~/Mounts/<archive-name>/`. If a name is already taken a numeric suffix is
-appended (`project_1`, `project_2`, …).
-
-Archives mounted outside of Rugzak (e.g. via the command line) are automatically reconciled into
-the list on launch and whenever macOS reports a disk event.
-
----
-
-## Supported formats
-
-Rugzak passes the archive directly to the bundled `fuse-archive`.
-The bundled `fuse-archive` links macOS system libraries (zlib, bzip2, iconv) plus vendored
-liblzma, libb2/BLAKE2, libzstd, and liblz4 — all compression formats are covered with no
-Homebrew runtime dependency.
-
-| Format group                                                          | Bundled | With Homebrew `fuse-archive` |
-| --------------------------------------------------------------------- | ------- | ---------------------------- |
-| `zip`, `zipx`, `jar`, `war`, `apk`, `ipa`, `epub`, `cbz`, …           | ✅      | ✅                           |
-| `tar`, `tar.gz`, `tar.bz2`, `cpio`, `ar`, `deb`, `rpm`                | ✅      | ✅                           |
-| `tar.xz`, `tar.lzma`, `xip`, `xar`                                    | ✅      | ✅                           |
-| `tar.zst`                                                             | ✅      | ✅                           |
-| `tar.lz4`                                                             | ✅      | ✅                           |
-| `7z`, `rar`, `cab`, `iso`, `lha`, `lzh`, `warc`, `mtree`              | ✅      | ✅                           |
-| `cbr`                                                                 | ✅      | ✅                           |
-| RAR5 (blake2 checksums)                                               | ✅      | ✅                           |
-| Compression filters `gz`, `bz2`, `z`                                  | ✅      | ✅                           |
-| Compression filters `xz`, `lzma`                                      | ✅      | ✅                           |
-| Compression filter `zst`                                              | ✅      | ✅                           |
-| Compression filter `lz4`                                              | ✅      | ✅                           |
-| Compression filters `lzo`, `br`, `lrz`, `grz`                         | 🔲      | ✅                           |
-| ASCII / encryption filters `base64`, `b64`, `uu`, `gpg`, `pgp`, `asc` | ✅      | ✅                           |
-
-> [!NOTE]
-> Encrypted archives (password-protected zip, gpg, …) are not supported in v0.1. Full UI for
-> encrypted archives is planned for v0.2.
 
 ---
 

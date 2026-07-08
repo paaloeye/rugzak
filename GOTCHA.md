@@ -1,6 +1,6 @@
 # GOTCHA.md
 
-Common gotchas and pitfalls when working [Claude Code](https://claude.ai/code) in AI-aided fashion.
+Common gotchas and pitfalls when working in AI-aided fashion.
 
 This file provides guidance to Claude when it keeps making the same mistakes.
 
