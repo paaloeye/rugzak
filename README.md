@@ -115,12 +115,12 @@ Applications folder alias, and optionally code-signs and notarises if credential
 ```
 Rugzak/
 ├── Models/
-│   └── MountedArchive.swift     — value type for a single mounted archive
+│   └── MountedArchive.swift      — value type for a single mounted archive
 ├── Services/
-│   ├── ArchiveManager.swift     — observable owner of the mount list
-│   ├── FuseProcess.swift        — fuse-archive process wrapper
-│   ├── MountReconciler.swift    — reads kernel mount table on startup
-│   └── UmountProcess.swift      — /sbin/umount wrapper
+│   ├── ArchiveManager.swift      — observable owner of the mount list
+│   ├── FuseProcess.swift         — fuse-archive process wrapper
+│   ├── MountReconciler.swift     — reads kernel mount table on startup
+│   └── UmountProcess.swift       — /sbin/umount wrapper
 └── Views/
     ├── ContentView.swift         — main window
     ├── DropTargetView.swift      — drag-and-drop NSView bridge
@@ -133,6 +133,13 @@ Rugzak/
 
 - macFUSE mounts are **read-only**; you cannot write back into the archive.
 - Encrypted archives are **not yet supported** (v0.2 planned).
+
+---
+
+## Author
+
+If you have any questions — ask me on [x.com/paaloeye](https://x.com/paaloeye), open an [Issue](https://github.com/paaloeye/rugzak/issues/new),
+or file a [PR](https://github.com/paaloeye/rugzak/compare).
 
 ---
 
