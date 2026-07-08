@@ -52,22 +52,68 @@ while IFS='|' read -r NAME URL COMMIT; do
 
     if [[ -d "${DEST}/.git" ]]; then
         CURRENT=$(git -C "${DEST}" rev-parse HEAD 2>/dev/null || echo "unknown")
-        if [[ "${CURRENT}" == "${COMMIT}" ]]; then
+        # Consider up-to-date if HEAD equals pinned commit, or if pinned is an
+        # ancestor (patches were cherry-picked on top and tracked in .applied_patches).
+        if [[ "${CURRENT}" == "${COMMIT}" ]] || \
+           git -C "${DEST}" merge-base --is-ancestor "${COMMIT}" HEAD 2>/dev/null; then
             ok "${NAME}: already at ${COMMIT:0:12}"
             continue
         fi
         log "${NAME}: updating to ${COMMIT:0:12}..."
         git -C "${DEST}" fetch --quiet origin
         git -C "${DEST}" checkout --quiet "${COMMIT}"
+        rm -f "${DEST}/.applied_patches"
         ok "${NAME}: ${COMMIT:0:12}"
     else
         log "${NAME}: cloning from ${URL}..."
         info "Pinned commit: ${COMMIT:0:12}"
         git clone --quiet "${URL}" "${DEST}"
         git -C "${DEST}" checkout --quiet "${COMMIT}"
+        rm -f "${DEST}/.applied_patches"
         ok "${NAME}: ${COMMIT:0:12}"
     fi
 done <<< "${VENDORS}"
+
+# ---------------------------------------------------------------------------
+# Patches — one line per patch: "name|commit_sha"
+# cherry-picked on top of the pinned vendor checkout.
+# A .applied_patches file in each vendor dir tracks which SHAs are done.
+# ---------------------------------------------------------------------------
+PATCHES="
+libarchive|75620d8ad714b3626d4881fbd23a9fdac1720353
+libarchive|ecea0fe59630d206c25ae877d111f70d1742b62f
+"
+
+while IFS='|' read -r NAME SHA; do
+    [[ -z "${NAME}" ]] && continue
+    DEST="${VENDOR_DIR}/${NAME}"
+    [[ -d "${DEST}/.git" ]] || { err "patch: ${NAME} not cloned"; exit 1; }
+
+    APPLIED_FILE="${DEST}/.applied_patches"
+    if [[ -f "${APPLIED_FILE}" ]] && grep -qF "${SHA}" "${APPLIED_FILE}" 2>/dev/null; then
+        ok "${NAME}: patch ${SHA:0:12} already applied"
+        continue
+    fi
+
+    # Fetch the commit from its origin if not already known locally
+    if ! git -C "${DEST}" cat-file -e "${SHA}^{commit}" 2>/dev/null; then
+        log "${NAME}: fetching patch commit ${SHA:0:12}..."
+        REMOTE_URL=$(git -C "${DEST}" remote get-url origin)
+        git -C "${DEST}" fetch --quiet "${REMOTE_URL}" "${SHA}" || {
+            err "${NAME}: failed to fetch ${SHA:0:12}"; exit 1;
+        }
+    fi
+
+    TITLE=$(git -C "${DEST}" log --format="%s" "${SHA}" -1 2>/dev/null)
+    log "${NAME}: applying patch ${SHA:0:12} (${TITLE})..."
+    git -C "${DEST}" cherry-pick --allow-empty "${SHA}" 2>/dev/null || {
+        git -C "${DEST}" cherry-pick --abort 2>/dev/null || true
+        err "${NAME}: patch ${SHA:0:12} failed to apply — resolve conflicts manually"
+        exit 1
+    }
+    echo "${SHA}" >> "${APPLIED_FILE}"
+    ok "${NAME}: patch ${SHA:0:12} applied"
+done <<< "${PATCHES}"
 
 echo ""
 ok "All vendored dependencies ready."
