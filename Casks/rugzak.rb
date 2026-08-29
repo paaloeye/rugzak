@@ -1,8 +1,8 @@
 cask "rugzak" do
-  version "0.2.0"
-  sha256 :no_check
+  version "0.2.1"
+  sha256 "4f1e4b8513028e75dcd6279159220668b19bbb4bec44b3fdd01e0c58448a3dce"
 
-  url "https://github.com/paaloeye/rugzak/releases/download/v#{version}/Rugzak.dmg"
+  url "https://github.com/paaloeye/rugzak/releases/download/v#{version}/Rugzak-0.2-6643f1e.dmg"
   name "Rugzak"
   desc "Mount and inspect archives seamlessly via macFUSE"
   homepage "https://github.com/paaloeye/rugzak"
@@ -13,7 +13,7 @@ cask "rugzak" do
   end
 
   auto_updates true
-  depends_on macos: ">= :sonoma"
+  depends_on macos: :sonoma
   depends_on cask: "macfuse"
 
   app "Rugzak.app"

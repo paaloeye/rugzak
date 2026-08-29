@@ -22,13 +22,13 @@ Unmounting is one click away.
 
 ## Getting Started
 
-### Option A: Homebrew Cask
+### Homebrew Cask
 
 ```bash
 brew install --cask paaloeye/tap/rugzak
 ```
 
-### Option B: Direct Download
+### Direct Download
 
 1. **Download** the latest `.dmg` from the [Releases page](https://github.com/paaloeye/rugzak/releases).
 2. **Install** by opening the `.dmg` and dragging **Rugzak** into your Applications folder.
