@@ -44,7 +44,23 @@ This file provides guidance to Gemini (Antigravity/agy) when working in this rep
 
 ## Commit Messages
 
-Follow conventional commit format with detailed explanations and proper sign-off. Use British Spelling.
+Follow conventional commit format with detailed explanations and proper sign-off.
+
+### Format
+
+```
+<type>(<scope>): <subject>
+
+<detailed body explaining what and why in bullet points>
+
+BREAKING CHANGE: <description if applicable>
+
+🤖 Generated with [$(ai.nu agent get-caller-identity --key .name)]($(ai.nu agent get-caller-identity --key .url))
+
+Co-Authored-By: $(ai.nu model --key .name) <gemini-code-assist@google.com>
+Co-Authored-By: $(ai.nu agent get-caller-identity)
+Signed-Off-By: Paal Øye-Strømme <paal.o.eye@gmail.com>
+```
 
 > [!IMPORTANT]
 > The `$(ai.nu agent get-caller-identity)` footer line requires shell substitution. Use an **unquoted** heredoc (`EOF`, not `'EOF'`) so the shell expands it:
@@ -57,30 +73,6 @@ Follow conventional commit format with detailed explanations and proper sign-off
 > EOF
 > )"
 > ```
-
-> [!TIP]
-> **For AI Agents / LLMs invoking `run_command`**:
-> When constructing the `CommandLine` tool argument, do NOT escape the dollar signs (`$`) used for shell substitution.
->
-> - Use a raw `$` in your JSON string (e.g. `$(ai.nu...)`), NOT `\\$` or `\\\\$`.
-> - Escaping the `$` in the JSON payload results in an escaped `\$` being sent to the terminal shell, which disables command substitution and forces a literal commit of the unexpanded script commands.
-
-### Format
-
-```
-<type>(<scope>): <subject>
-
-- <detailed body explaining what and why>
-- <bullet points for clarity>
-
-BREAKING CHANGE: <description if applicable>
-
-🤖 Generated with [$(ai.nu agent get-caller-identity --key .name)]($(ai.nu agent get-caller-identity --key .url))
-
-Co-Authored-By: $(ai.nu model --key .name) <gemini-code-assist@google.com>
-Co-Authored-By: $(ai.nu agent get-caller-identity)
-Signed-Off-By: Paal Øye-Strømme <paal.o.eye@gmail.com>
-```
 
 ### Best Practices
 

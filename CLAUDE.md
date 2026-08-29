@@ -65,8 +65,6 @@ Follow conventional commit format with detailed explanations and proper sign-off
 > - Use a raw `$` in your JSON string (e.g. `$(ai.nu...)`), NOT `\\$` or `\\\\$`.
 > - Escaping the `$` in the JSON payload results in an escaped `\$` being sent to the terminal shell, which disables command substitution and forces a literal commit of the unexpanded script commands.
 
-### Format
-
 ```
 <type>(<scope>): <subject>
 
