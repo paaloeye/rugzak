@@ -3,13 +3,13 @@
 #  SPDX-License-Identifier: MIT
 #  Copyright (c) 2026 Paal Øye-Strømme
 #
-#  create_dmg.sh
+#  create_pkg.sh
 #
-# Build and create DMG distribution:
+# Build and create PKG distribution:
 #
 # 1. Builds in Release configuration
-# 2. Creates a distributable DMG with app and Applications folder link
-# 3. Optionally code signs and notarizes the DMG
+# 2. Creates a flat installer package (.pkg) that installs the app to /Applications
+# 3. Optionally code signs (Developer ID Installer) and notarizes the package
 #
 
 set -euo pipefail
@@ -30,6 +30,7 @@ DEV_SIGN=false
 NOTARIZE=false
 VERBOSE=false
 SIGNING_IDENTITY=""
+INSTALLER_IDENTITY=""
 TEAM_ID=""
 APPLE_ID=""
 NOTARIZE_PASSWORD=""
@@ -56,6 +57,10 @@ while [[ $# -gt 0 ]]; do
         --sign)
             SIGN=true
             SIGNING_IDENTITY="$2"
+            shift 2
+            ;;
+        --installer-identity)
+            INSTALLER_IDENTITY="$2"
             shift 2
             ;;
         --notarize)
@@ -91,34 +96,36 @@ while [[ $# -gt 0 ]]; do
             VERBOSE=true
             shift
             ;;
-
         --help|-h)
             echo "Usage: $0 SCHEME [OPTIONS]"
             echo ""
             echo "Arguments:"
-            echo "  SCHEME                     Xcode scheme to build (required)"
+            echo "  SCHEME                         Xcode scheme to build (required)"
             echo ""
             echo "Options:"
-            echo "  --project PROJECT          Xcode project name (default: same as SCHEME)"
-            echo "  --clean                    Clean build (remove derived data)"
-            echo "  --dev-sign                 Sign with Apple Development"
-            echo "  --sign IDENTITY            Code sign with specified identity (e.g., 'Developer ID Application')"
-            echo "  --notarize TEAM_ID         Notarize DMG (requires --sign)"
-            echo "  --keychain-profile NAME    Keychain profile for notarytool (local dev)"
-            echo "  --apple-id EMAIL           Apple ID for notarization"
-            echo "  --password PASS            App-specific password (use @keychain:NAME to read from Keychain)"
-            echo "  --api-key PATH             Path to App Store Connect API key .p8 file (CI preferred)"
-            echo "  --api-key-id ID            App Store Connect API key ID"
-            echo "  --api-issuer ID            App Store Connect issuer ID"
-            echo "  --verbose,-v               Show detailed build output"
-            echo "  --help,-h                  Show this help message"
+            echo "  --project PROJECT              Xcode project name (default: same as SCHEME)"
+            echo "  --clean                        Clean build (remove derived data)"
+            echo "  --dev-sign                     Sign app with Apple Development"
+            echo "  --sign IDENTITY                Code sign app with specified identity"
+            echo "                                 (e.g., 'Developer ID Application: Name (TEAMID)')"
+            echo "  --installer-identity IDENTITY  Sign PKG with specified installer identity"
+            echo "                                 (default: 'Developer ID Installer' derived from --sign)"
+            echo "  --notarize TEAM_ID             Notarize PKG (requires --sign)"
+            echo "  --keychain-profile NAME        Keychain profile for notarytool (local dev)"
+            echo "  --apple-id EMAIL               Apple ID for notarization"
+            echo "  --password PASS                App-specific password (use @keychain:NAME to read from Keychain)"
+            echo "  --api-key PATH                 Path to App Store Connect API key .p8 file (CI preferred)"
+            echo "  --api-key-id ID                App Store Connect API key ID"
+            echo "  --api-issuer ID                App Store Connect issuer ID"
+            echo "  --verbose,-v                   Show detailed build output"
+            echo "  --help,-h                      Show this help message"
             echo ""
             echo "Examples:"
-            echo "  $0 SCHEME                                           # Basic DMG creation (unsigned)"
-            echo "  $0 SCHEME --dev-sign                                # Development signed"
-            echo "  $0 SCHEME --sign \"Developer ID Application: Name\" # Distribution signed DMG"
-            echo "  $0 SCHEME --sign \"Developer ID Application: Name\" --notarize TEAM_ID --keychain-profile AC_PASSWORD"
-            echo "  $0 SCHEME --sign \"Developer ID Application: Name\" --notarize TEAM_ID --apple-id you@example.com --password @keychain:AC_PASSWORD"
+            echo "  $0 SCHEME                                                    # Basic PKG (unsigned)"
+            echo "  $0 SCHEME --dev-sign                                         # Development signed"
+            echo "  $0 SCHEME --sign \"Developer ID Application: Name (TEAMID)\"  # Distribution signed PKG"
+            echo "  $0 SCHEME --sign \"Developer ID Application: Name (TEAMID)\" \\"
+            echo "            --notarize TEAMID --keychain-profile AC_PASSWORD"
             echo ""
             echo "Store credentials in Keychain (one-time setup):"
             echo "  xcrun notarytool store-credentials AC_PASSWORD --apple-id you@example.com --team-id TEAM_ID"
@@ -129,7 +136,6 @@ while [[ $# -gt 0 ]]; do
             echo "Use --help for usage information"
             exit 1
             ;;
-
         *)
             if [[ -z "$SCHEME" ]]; then
                 SCHEME="$1"
@@ -140,7 +146,6 @@ while [[ $# -gt 0 ]]; do
             fi
             shift
             ;;
-
     esac
 done
 
@@ -152,24 +157,28 @@ fi
 
 PROJECT="${PROJECT:-$SCHEME}"
 
+# Derive installer identity from app signing identity when not provided explicitly.
+# "Developer ID Application: Name (TEAMID)" → "Developer ID Installer: Name (TEAMID)"
+if [ "$SIGN" = true ] && [ -z "$INSTALLER_IDENTITY" ]; then
+    INSTALLER_IDENTITY="${SIGNING_IDENTITY/Developer ID Application/Developer ID Installer}"
+fi
+
 # Configuration
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 XCODE_PROJECT="${PROJECT_ROOT}/${PROJECT}.xcodeproj"
 BUILD_CONFIG="Release"
 DERIVED_DATA="${PROJECT_ROOT}/.tmp/DerivedData"
 DIST_DIR="${PROJECT_ROOT}/.tmp/dist"
-DMG_DIR="${PROJECT_ROOT}/.dist"
+PKG_DIR="${PROJECT_ROOT}/.dist"
 
 echo "=================================================="
-echo "  ${SCHEME} DMG Creator"
+echo "  ${SCHEME} PKG Creator"
 echo "=================================================="
 echo ""
 
-# Create output directories
 mkdir -p "${DIST_DIR}"
-mkdir -p "${DMG_DIR}"
+mkdir -p "${PKG_DIR}"
 
-# Determine grep filter for build output
 if [ "$VERBOSE" = true ]; then
     GREP_FILTER="cat"
 else
@@ -177,6 +186,13 @@ else
 fi
 
 cd "${PROJECT_ROOT}"
+
+if [ "$CLEAN" = true ]; then
+    echo -e "${YELLOW}Cleaning derived data...${NC}"
+    rm -rf "${DERIVED_DATA}"
+    echo -e "${GREEN}✓ Clean done${NC}"
+    echo ""
+fi
 
 echo -e "${YELLOW}Building ${SCHEME} (${BUILD_CONFIG})...${NC}"
 
@@ -233,9 +249,6 @@ BUILD_STATUS=${PIPESTATUS[0]}
 
 if [ $BUILD_STATUS -ne 0 ]; then
     echo -e "${RED}✗ ${SCHEME} build failed${NC}"
-    echo ""
-    echo -e "${YELLOW}Available signing identities:${NC}"
-    security find-identity -v -p codesigning
     exit 1
 fi
 
@@ -249,125 +262,51 @@ fi
 echo -e "${GREEN}✓ ${SCHEME}.app built successfully${NC}"
 echo ""
 
-# Extract version information
+# Extract version and identity information from the built app
 VERSION=$(defaults read "${APP_PATH}/Contents/Info.plist" CFBundleShortVersionString 2>/dev/null)
 BUILD=$(defaults read "${APP_PATH}/Contents/Info.plist" CFBundleVersion 2>/dev/null)
-GIT_COMMIT_FROM_PLIST=$(defaults read "${APP_PATH}/Contents/Info.plist" GitCommitHash 2>/dev/null || echo "unknown")
-GIT_BUILD_STATUS_FROM_PLIST=$(defaults read "${APP_PATH}/Contents/Info.plist" GitBuildStatus 2>/dev/null || echo "unknown")
+BUNDLE_ID=$(defaults read "${APP_PATH}/Contents/Info.plist" CFBundleIdentifier 2>/dev/null)
+GIT_COMMIT=$(defaults read "${APP_PATH}/Contents/Info.plist" GitCommitHash 2>/dev/null || echo "unknown")
+GIT_STATUS=$(defaults read "${APP_PATH}/Contents/Info.plist" GitBuildStatus 2>/dev/null || echo "unknown")
 
 echo -e "${BLUE}Version Information:${NC}"
-echo "  Version: ${VERSION}"
-echo "  Build: ${BUILD}"
-echo "  Git commit: ${GIT_COMMIT_FROM_PLIST}"
-echo "  Git build status: ${GIT_BUILD_STATUS_FROM_PLIST}"
+echo "  Version:    ${VERSION}"
+echo "  Build:      ${BUILD}"
+echo "  Bundle ID:  ${BUNDLE_ID}"
+echo "  Git commit: ${GIT_COMMIT}"
+echo "  Git status: ${GIT_STATUS}"
 echo ""
 
-# Build DMG name with git information
-DMG_NAME="${SCHEME}-${VERSION}-${GIT_COMMIT_FROM_PLIST}"
-if [ "${GIT_BUILD_STATUS_FROM_PLIST}" = "dirty" ]; then
-    DMG_NAME="${DMG_NAME}-dirty"
+# Build PKG name with git information
+PKG_NAME="${SCHEME}-${VERSION}-${GIT_COMMIT}"
+if [ "${GIT_STATUS}" = "dirty" ]; then
+    PKG_NAME="${PKG_NAME}-dirty"
 fi
 
-TEMP_DMG="${DIST_DIR}/${DMG_NAME}-temp.dmg"
-FINAL_DMG="${DMG_DIR}/${DMG_NAME}.dmg"
+COMPONENT_PKG="${DIST_DIR}/${PKG_NAME}-component.pkg"
+FINAL_PKG="${PKG_DIR}/${PKG_NAME}.pkg"
 
-# Create staging directory for DMG contents
-STAGING_DIR="${DIST_DIR}/staging"
-rm -rf "${STAGING_DIR}"
-mkdir -p "${STAGING_DIR}"
+# Remove stale artefacts
+rm -f "${COMPONENT_PKG}" "${FINAL_PKG}"
 
-# Copy app to staging directory
-echo -e "${YELLOW}Preparing DMG contents...${NC}"
-cp -R "${APP_PATH}" "${STAGING_DIR}/"
+echo -e "${YELLOW}Creating PKG...${NC}"
 
-# Create symbolic link to Applications folder
-ln -s /Applications "${STAGING_DIR}/Applications"
+PKGBUILD_ARGS=(
+    --component "${APP_PATH}"
+    --install-location /Applications
+    --identifier "${BUNDLE_ID}"
+    --version "${VERSION}"
+)
 
-echo -e "${GREEN}✓ DMG contents prepared${NC}"
-echo ""
-
-# Create DMG
-echo -e "${YELLOW}Creating DMG image...${NC}"
-
-# Remove old DMG files if they exist
-rm -f "${TEMP_DMG}"
-rm -f "${FINAL_DMG}"
-
-# Create temporary DMG
-hdiutil create \
-    -volname "${SCHEME}" \
-    -srcfolder "${STAGING_DIR}" \
-    -ov \
-    -format UDRW \
-    "${TEMP_DMG}"
-
-# Mount via standard DiskArbitration (lets Finder see the disk; no custom mountpoint, no root needed)
-MOUNT_DIR=$(hdiutil attach "${TEMP_DMG}" | awk '/\/Volumes\// {print $NF}')
-
-# Wait until Finder has registered the disk, then set icon layout — single session avoids inter-call races
-osascript <<EOF || true
-tell application "Finder"
-    -- wait is probably optional but might be handy in CI
-    set waited to 0
-    repeat
-        try
-            set d to disk "${SCHEME}"
-            exit repeat
-        on error
-            delay 0.5
-            set waited to waited + 0.5
-            if waited > 30 then error "Timed out waiting for disk '${SCHEME}' to appear in Finder"
-        end try
-    end repeat
-    tell disk "${SCHEME}"
-        open
-        delay 1
-        set current view of container window to icon view
-        set toolbar visible of container window to false
-        set statusbar visible of container window to false
-        set the bounds of container window to {400, 100, 900, 600}
-        set viewOptions to the icon view options of container window
-        set arrangement of viewOptions to not arranged
-        set icon size of viewOptions to 128
-        set position of item "${SCHEME}.app" of container window to {125, 225}
-        set position of item "Applications" of container window to {375, 225}
-        close
-        open
-        update without registering applications
-        close
-        delay 3
-    end tell
-end tell
-EOF
-
-# Unmount the DMG
-hdiutil detach "${MOUNT_DIR}"
-
-# Convert to compressed read-only DMG
-echo -e "${YELLOW}Compressing DMG...${NC}"
-hdiutil convert "${TEMP_DMG}" \
-    -format UDZO \
-    -o "${FINAL_DMG}"
-
-# Clean up
-rm -f "${TEMP_DMG}"
-rm -rf "${STAGING_DIR}"
-
-echo -e "${GREEN}✓ DMG created${NC}"
-echo ""
-
-# Code sign DMG if requested (skip for dev-sign)
 if [ "$SIGN" = true ]; then
-    echo -e "${YELLOW}Signing DMG...${NC}"
-    codesign --sign "${SIGNING_IDENTITY}" \
-        --force \
-        --timestamp \
-        "${FINAL_DMG}"
-    echo -e "${GREEN}✓ DMG signed${NC}"
-elif [ "$DEV_SIGN" = true ]; then
-    echo -e "${BLUE}Skipping DMG signing for development build${NC}"
-    echo ""
+    echo "  Installer identity: ${INSTALLER_IDENTITY}"
+    PKGBUILD_ARGS+=(--sign "${INSTALLER_IDENTITY}" --timestamp)
 fi
+
+pkgbuild "${PKGBUILD_ARGS[@]}" "${FINAL_PKG}"
+
+echo -e "${GREEN}✓ PKG created${NC}"
+echo ""
 
 # Notarize if requested
 if [ "$NOTARIZE" = true ]; then
@@ -376,7 +315,7 @@ if [ "$NOTARIZE" = true ]; then
         exit 1
     fi
 
-    echo -e "${YELLOW}Submitting DMG for notarization...${NC}"
+    echo -e "${YELLOW}Submitting PKG for notarization...${NC}"
     echo "  (This may take several minutes)"
 
     NOTARIZE_AUTH_ARGS=()
@@ -402,7 +341,7 @@ if [ "$NOTARIZE" = true ]; then
         exit 1
     fi
 
-    SUBMIT_OUTPUT=$(xcrun notarytool submit "${FINAL_DMG}" \
+    SUBMIT_OUTPUT=$(xcrun notarytool submit "${FINAL_PKG}" \
         "${NOTARIZE_AUTH_ARGS[@]}" 2>&1) || true
     echo "${SUBMIT_OUTPUT}"
 
@@ -438,45 +377,47 @@ if [ "$NOTARIZE" = true ]; then
     fi
 
     echo -e "${YELLOW}Stapling notarization ticket...${NC}"
-    xcrun stapler staple "${FINAL_DMG}"
+    xcrun stapler staple "${FINAL_PKG}"
 
-    echo -e "${GREEN}✓ DMG notarized and stapled${NC}"
+    echo -e "${GREEN}✓ PKG notarized and stapled${NC}"
     echo ""
 fi
 
 # Show final results
-DMG_SIZE=$(du -sh "${FINAL_DMG}" | cut -f1)
-DMG_CHECKSUM=$(shasum -a 256 "${FINAL_DMG}" | cut -d' ' -f1)
+PKG_SIZE=$(du -sh "${FINAL_PKG}" | cut -f1)
+PKG_CHECKSUM=$(shasum -a 256 "${FINAL_PKG}" | cut -d' ' -f1)
 
 echo "=================================================="
-echo "  DMG Creation Complete"
+echo "  PKG Creation Complete"
 echo "=================================================="
 echo ""
 echo -e "${BLUE}Output:${NC}"
-echo "  ${FINAL_DMG}"
+echo "  ${FINAL_PKG}"
 echo ""
 echo -e "${BLUE}Details:${NC}"
-echo "  Size: ${DMG_SIZE}"
-echo "  SHA256: ${DMG_CHECKSUM}"
+echo "  Size:   ${PKG_SIZE}"
+echo "  SHA256: ${PKG_CHECKSUM}"
 echo ""
 echo -e "${BLUE}Status:${NC}"
 if [ "$SIGN" = true ]; then
-    echo "  ✅ Code signed"
+    echo "  ✅ App code signed"
+    echo "  ✅ PKG installer signed"
 elif [ "$DEV_SIGN" = true ]; then
-    echo "  👷 Dev code signed"
+    echo "  👷 App dev code signed"
+    echo "  ⚠️  PKG not installer-signed"
 else
-    echo "  ⚠️ Not code signed"
+    echo "  ⚠️  Not code signed"
 fi
 
 if [ "$NOTARIZE" = true ]; then
     echo "  ✅ Notarized"
 else
-    echo "  ⚠️ Not notarized"
+    echo "  ⚠️  Not notarized"
 fi
 echo ""
 
-# Verification
-echo -e "${YELLOW}Verifying DMG...${NC}"
-hdiutil verify "${FINAL_DMG}"
-echo -e "${GREEN}✓ DMG verified${NC}"
+# Verify the package is well-formed
+echo -e "${YELLOW}Verifying PKG...${NC}"
+pkgutil --check-signature "${FINAL_PKG}" 2>/dev/null || pkgutil --payload-files "${FINAL_PKG}" > /dev/null
+echo -e "${GREEN}✓ PKG verified${NC}"
 echo ""

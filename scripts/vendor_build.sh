@@ -89,9 +89,10 @@ FUSE3_CFLAGS=$(pkg-config --cflags fuse3)
 FUSE3_LIBS=$(pkg-config --libs fuse3)
 
 # Use macOS system compression and iconv — no Homebrew required.
-# zlib, bzip2, and iconv ship with every macOS install.
+# zlib, bzip2, iconv, and libxml2 ship with every macOS install.
 # xz/lzma, blake2/libb2, zstd, and lz4 are all vendored and built below.
-COMP_LIBS="-lz -lbz2 -liconv"
+# libxml2 is needed for XAR format support in libarchive.
+COMP_LIBS="-lz -lbz2 -liconv -lxml2"
 
 # ---------------------------------------------------------------------------
 # Build liblzma (static) for a single arch
@@ -325,7 +326,7 @@ build_libarchive_arch() {
         -DENABLE_OPENSSL=OFF \
         -DENABLE_MBEDTLS=OFF \
         -DENABLE_NETTLE=OFF \
-        -DENABLE_LIBXML2=OFF \
+        -DENABLE_LIBXML2=ON \
         -DENABLE_EXPAT=OFF \
         -DENABLE_PCREPOSIX=OFF \
         -DENABLE_PCRE2POSIX=OFF \
